@@ -1,5 +1,3 @@
-// Sample Artwork Data (Including Image Paths)
-// Sample Artwork Data (All 30 Images)
 let artworks = [
     // Digital Art
     { id: 1, title: "Abstract Vision", category: "digital", artist: "Alice Carter", price: 150, rating: 4.5, img: "../Images/DigitalArt1.jpg", likes: 0, dislikes: 0 },
@@ -22,21 +20,21 @@ let artworks = [
     { id: 14, title: "Timeless Bust", category: "sculpture", artist: "Veronica Black", price: 320, rating: 4.7, img: "../Images/Sculpture4.jpg", likes: 0, dislikes: 0 },
     { id: 15, title: "Roman Elegance", category: "sculpture", artist: "Oliver Knight", price: 450, rating: 4.9, img: "../Images/Sculpture5.jpg", likes: 0, dislikes: 0 },
 
-    // More Digital Art
+    // Digital Art
     { id: 16, title: "Surreal Dream", category: "digital", artist: "Lucas Moore", price: 200, rating: 4.6, img: "../Images/DigitalArt6.jpg", likes: 0, dislikes: 0 },
     { id: 17, title: "Galactic Odyssey", category: "digital", artist: "Sophia Carter", price: 260, rating: 4.8, img: "../Images/DigitalArt7.jpg", likes: 0, dislikes: 0 },
     { id: 18, title: "The Awakening", category: "digital", artist: "Ethan Ramirez", price: 180, rating: 4.7, img: "../Images/DigitalArt8.jpg", likes: 0, dislikes: 0 },
     { id: 19, title: "Electric Dreams", category: "digital", artist: "Olivia Bennett", price: 240, rating: 4.5, img: "../Images/DigitalArt9.jpg", likes: 0, dislikes: 0 },
     { id: 20, title: "Fantasy Realm", category: "digital", artist: "Noah Scott", price: 280, rating: 4.9, img: "../Images/DigitalArt10.jpg", likes: 0, dislikes: 0 },
 
-    // More Paintings
+    // Paintings
     { id: 21, title: "Sunset Over Hills", category: "painting", artist: "Daniel Green", price: 120, rating: 4.3, img: "../Images/Painting6.jpg", likes: 0, dislikes: 0 },
     { id: 22, title: "Misty Morning", category: "painting", artist: "Emily White", price: 140, rating: 4.5, img: "../Images/Painting7.jpg", likes: 0, dislikes: 0 },
     { id: 23, title: "Winter Cabin", category: "painting", artist: "Benjamin Foster", price: 130, rating: 4.4, img: "../Images/Painting8.jpeg", likes: 0, dislikes: 0 },
     { id: 24, title: "The Lonely Tree", category: "painting", artist: "Charlotte King", price: 160, rating: 4.6, img: "../Images/Painting9.jpg", likes: 0, dislikes: 0 },
     { id: 25, title: "Red Blossom", category: "painting", artist: "Mason Turner", price: 190, rating: 4.8, img: "../Images/Painting10.jpg", likes: 0, dislikes: 0 },
 
-    // More Sculptures
+    // Sculptures
     { id: 26, title: "Venus Reimagined", category: "sculpture", artist: "Liam Wright", price: 420, rating: 4.7, img: "../Images/Sculpture6.jpg", likes: 0, dislikes: 0 },
     { id: 27, title: "Mystic Stone", category: "sculpture", artist: "Emma Hayes", price: 380, rating: 4.6, img: "../Images/Sculpture7.jpg", likes: 0, dislikes: 0 },
     { id: 28, title: "Ancient Figure", category: "sculpture", artist: "William Cooper", price: 490, rating: 4.9, img: "../Images/Sculpture8.jpg", likes: 0, dislikes: 0 },
@@ -105,16 +103,18 @@ function displayArtworks(filteredArt = artworks) {
     }
 
     grid.innerHTML = filteredArt.map(art => `
-        <div class="art-item">
-            <img src="${art.img}" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';">
-            <h3>${art.title}</h3>
-            <p>By: <strong>${art.artist}</strong></p>
-            <p>Category: ${art.category} | Price: $${art.price} | ⭐ ${art.rating}</p>
-            <div class="like-dislike">
-                <button class="like-btn" onclick="checkLoginAndProceed('like', ${art.id})">👍</button>
-                <span id="likes-${art.id}">${art.likes}</span>
-                <button class="dislike-btn" onclick="checkLoginAndProceed('dislike', ${art.id})">👎</button>
-                <span id="dislikes-${art.id}">${art.dislikes}</span>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="${art.img}" class="card-img-top" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';">
+                <div class="card-body">
+                    <h5 class="card-title">${art.title}</h5>
+                    <p class="card-text">By <strong>${art.artist}</strong></p>
+                    <p><span class="badge bg-warning text-dark">⭐ ${art.rating}</span> | $${art.price}</p>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-success" onclick="checkLoginAndProceed('like', ${art.id})">👍 <span>${art.likes}</span></button>
+                        <button class="btn btn-outline-danger" onclick="checkLoginAndProceed('dislike', ${art.id})">👎 <span>${art.dislikes}</span></button>
+                    </div>
+                </div>
             </div>
         </div>
     `).join("");
