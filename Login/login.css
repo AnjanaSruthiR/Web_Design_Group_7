@@ -90,3 +90,40 @@ input:focus {
     color: #3d5a6b; /* Dark teal color on hover */
     text-decoration: underline;
 }
+@media (max-width: 1025px) {
+    .login-container {
+        width: 700px;
+    }
+}
+@media (max-width: 769px) {
+    .login-container {
+        width: 500px;
+    }
+}
+@media (max-width: 600px) {
+    .login-container {
+        max-width: 400px;
+    }
+}
+@media (max-width: 481px) {
+    .login-container {
+        width: 200px;
+        height: 250px
+    }
+    .login-btn {
+        width: 100%;
+        padding: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background 0.3s, transform 0.2sease;
+    }
+    form {
+        display: block;
+        margin-top: -3em;
+        unicode-bidi: isolate;
+    }
+    h2 {
+        position: relative;
+        top: -40px; /* Move up */
+    }
+}
