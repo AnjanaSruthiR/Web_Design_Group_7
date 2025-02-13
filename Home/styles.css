@@ -1,0 +1,130 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Color Theme */
+:root {
+    --primary: #2C3E50;
+    --secondary: #F8F9FA;
+    --accent: #E67E22;
+    --dark-text: #333;
+    --light-text: #555;
+}
+
+/* Body */
+body {
+    background: var(--secondary);
+    color: var(--dark-text);
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: var(--primary);
+}
+
+.search-bar {
+    display: flex;
+    width: 50%;
+}
+
+.search-bar input {
+    width: 80%;
+    padding: 10px;
+    border: 1px solid var(--primary);
+    border-radius: 5px 0 0 5px;
+}
+
+.search-btn {
+    padding: 10px 15px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+
+.btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+    border-radius: 5px;
+}
+
+/* Filters */
+.filters {
+    display: flex;
+    justify-content: center;
+    margin: 90px auto 20px;
+    gap: 15px;
+}
+
+.filters select {
+    padding: 10px;
+    border: 1px solid var(--primary);
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+}
+
+/* Artwork Grid */
+.artworks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.art-item {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.art-item img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.art-item h3 {
+    margin-top: 10px;
+    color: var(--primary);
+}
+
+.art-item p {
+    font-size: 14px;
+    color: var(--light-text);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+    }
+    .filters {
+        flex-direction: column;
+    }
+}
