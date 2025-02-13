@@ -42,6 +42,7 @@ let artworks = [
     { id: 30, title: "Ethereal Form", category: "sculpture", artist: "Sophia Adams", price: 430, rating: 4.7, img: "../Images/Sculpture10.jpg", likes: 0, dislikes: 0 }
 ];
 
+
 function loadStoredData() {
     const storedData = JSON.parse(localStorage.getItem("artworks"));
     if (storedData && Array.isArray(storedData) && storedData.length > 0) {
@@ -70,17 +71,6 @@ function checkLoginAndProceed(action, artworkId) {
         window.location.href = "login.html";
     } else {
         updateLikeDislike(action, artworkId);
-    }
-}
-
-function adjustLogoSize() {
-    let logo = document.getElementById("logoImage");
-    if (window.innerWidth < 576) {
-        logo.style.height = "40px";
-    } else if (window.innerWidth < 992) {
-        logo.style.height = "50px";
-    } else {
-        logo.style.height = "60px";
     }
 }
 
@@ -117,6 +107,7 @@ function displayArtworks(filteredArt = artworks) {
         return;
     }
 
+    // Calculate total pages
     const totalPages = Math.ceil(filteredArt.length / artworksPerPage);
 
     const startIndex = (currentPage - 1) * artworksPerPage;
@@ -129,9 +120,10 @@ function displayArtworks(filteredArt = artworks) {
         return;
     }
 
+    // Render artworks for the current page
     grid.innerHTML = currentPageArtworks.map(art => `
         <div class="col-md-4 mb-4">
-            <div class="card h-100" style="cursor: pointer;">
+            <div class="card h-100">
                 <img src="${art.img}" class="card-img-top" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';" data-bs-toggle="modal" data-bs-target="#artworkModal${art.id}">
                 <div class="card-body">
                     <h5 class="card-title">${art.title}</h5>
@@ -190,6 +182,7 @@ function updatePagination(totalPages) {
         </li>
     `;
 
+    // Add page numbers (1, 2, 3, ...)
     for (let i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
             pageNumbers += `
@@ -228,39 +221,12 @@ function changePage(page) {
     displayArtworks();  
 }
 
-function applyFilters() {
-    let filtered = [...artworks];
+displayArtworks();
 
-    const category = document.getElementById("categoryFilter")?.value;
-    const price = document.getElementById("priceFilter")?.value;
-    const sort = document.getElementById("sortFilter")?.value;
-    const searchQuery = document.getElementById("search")?.value.toLowerCase();
-
-    if (category && category !== "all") {
-        filtered = filtered.filter(art => art.category === category);
-    }
-
-    if (price === "low") filtered = filtered.filter(art => art.price < 50);
-    if (price === "medium") filtered = filtered.filter(art => art.price >= 50 && art.price <= 200);
-    if (price === "high") filtered = filtered.filter(art => art.price > 200);
-
-    if (sort === "R_lowToHigh") filtered.sort((a, b) => a.rating - b.rating);
-    if (sort === "R_highToLow") filtered.sort((a, b) => b.rating - a.rating);
-    if (sort === "P_lowToHigh") filtered.sort((a, b) => a.price - b.price);
-    if (sort === "P_highToLow") filtered.sort((a, b) => b.price - a.price);
-
-    if (searchQuery) {
-        filtered = filtered.filter(art => art.title.toLowerCase().includes(searchQuery) || art.artist.toLowerCase().includes(searchQuery));
-    }
-
-    displayArtworks(filtered);
-}
 
 document.addEventListener("DOMContentLoaded", () => {
     loadStoredData();
     displayArtworks();
-    adjustLogoSize();
-    window.onresize = adjustLogoSize;
 
     document.getElementById("categoryFilter")?.addEventListener("change", applyFilters);
     document.getElementById("priceFilter")?.addEventListener("change", applyFilters);
