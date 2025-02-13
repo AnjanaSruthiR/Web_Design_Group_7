@@ -105,7 +105,7 @@ function displayArtworks(filteredArt = artworks) {
     grid.innerHTML = filteredArt.map(art => `
         <div class="col-md-4 mb-4">
             <div class="card h-100">
-                <img src="${art.img}" class="card-img-top" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';">
+                <img src="${art.img}" class="card-img-top" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';" data-bs-toggle="modal" data-bs-target="#artworkModal${art.id}">
                 <div class="card-body">
                     <h5 class="card-title">${art.title}</h5>
                     <p class="card-text">By <strong>${art.artist}</strong></p>
@@ -117,6 +117,29 @@ function displayArtworks(filteredArt = artworks) {
                 </div>
             </div>
         </div>
+
+<div class="modal fade" id="artworkModal${art.id}" tabindex="-1" aria-labelledby="artworkModalLabel${art.id}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="artworkModalLabel${art.id}">${art.title} by ${art.artist}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <img src="${art.img}" class="img-fluid mb-3" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p><strong>Price:</strong> $${art.price}</p>
+                        <p><strong>Rating:</strong> ${art.rating} ⭐</p>
+                        <p><strong>Description:</strong> <em>Details about this artwork can go here.</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
     `).join("");
 }
 
