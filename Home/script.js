@@ -42,6 +42,7 @@ let artworks = [
     { id: 30, title: "Ethereal Form", category: "sculpture", artist: "Sophia Adams", price: 430, rating: 4.7, img: "../Images/Sculpture10.jpg", likes: 0, dislikes: 0 }
 ];
 
+
 function loadStoredData() {
     const storedData = JSON.parse(localStorage.getItem("artworks"));
     if (storedData && Array.isArray(storedData) && storedData.length > 0) {
@@ -94,15 +95,33 @@ function updateLikeDislike(action, artworkId) {
     displayArtworks();
 }
 
+let currentPage = 1; 
+const artworksPerPage = 9;
+
 function displayArtworks(filteredArt = artworks) {
     const grid = document.getElementById("artworksGrid");
+    const pagination = document.getElementById("pagination");
 
-    if (!grid) {
-        console.error("Error: Element with ID 'artworksGrid' not found!");
+    if (!grid || !pagination) {
+        console.error("Error: Element with ID 'artworksGrid' or 'pagination' not found!");
         return;
     }
 
-    grid.innerHTML = filteredArt.map(art => `
+    // Calculate total pages
+    const totalPages = Math.ceil(filteredArt.length / artworksPerPage);
+
+    const startIndex = (currentPage - 1) * artworksPerPage;
+    const endIndex = startIndex + artworksPerPage;
+
+    const currentPageArtworks = filteredArt.slice(startIndex, endIndex);
+
+    if (currentPageArtworks.length === 0) {
+        grid.innerHTML = "<p>No artworks to display.</p>";
+        return;
+    }
+
+    // Render artworks for the current page
+    grid.innerHTML = currentPageArtworks.map(art => `
         <div class="col-md-4 mb-4">
             <div class="card h-100">
                 <img src="${art.img}" class="card-img-top" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';" data-bs-toggle="modal" data-bs-target="#artworkModal${art.id}">
@@ -118,58 +137,92 @@ function displayArtworks(filteredArt = artworks) {
             </div>
         </div>
 
-<div class="modal fade" id="artworkModal${art.id}" tabindex="-1" aria-labelledby="artworkModalLabel${art.id}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="artworkModalLabel${art.id}">${art.title} by ${art.artist}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        <img src="${art.img}" class="img-fluid mb-3" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';">
+        <div class="modal fade" id="artworkModal${art.id}" tabindex="-1" aria-labelledby="artworkModalLabel${art.id}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="artworkModalLabel${art.id}">${art.title} by ${art.artist}</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="col-12 col-md-6">
-                        <p><strong>Price:</strong> $${art.price}</p>
-                        <p><strong>Rating:</strong> ${art.rating} ⭐</p>
-                        <p><strong>Description:</strong> <em>Details about this artwork can go here.</em></p>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <img src="${art.img}" class="img-fluid mb-3" alt="${art.title}" onerror="this.onerror=null; this.src='Images/placeholder.jpg';">
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <p><strong>Price:</strong> $${art.price}</p>
+                                <p><strong>Rating:</strong> ${art.rating} ⭐</p>
+                                <p><strong>Description:</strong> <em>Details about this artwork can go here.</em></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
     `).join("");
+
+    updatePagination(totalPages);
 }
 
-function applyFilters() {
-    let filtered = [...artworks];
+function updatePagination(totalPages) {
+    const pagination = document.getElementById("pagination");
 
-    const category = document.getElementById("categoryFilter")?.value;
-    const price = document.getElementById("priceFilter")?.value;
-    const sort = document.getElementById("sortFilter")?.value;
-    const searchQuery = document.getElementById("search")?.value.toLowerCase();
-
-    if (category && category !== "all") {
-        filtered = filtered.filter(art => art.category === category);
+    if (!pagination) {
+        console.error("Error: Element with ID 'pagination' not found!");
+        return;
     }
 
-    if (price === "low") filtered = filtered.filter(art => art.price < 50);
-    if (price === "medium") filtered = filtered.filter(art => art.price >= 50 && art.price <= 200);
-    if (price === "high") filtered = filtered.filter(art => art.price > 200);
+    let pageNumbers = '';
 
-    if (sort === "R_lowToHigh") filtered.sort((a, b) => a.rating - b.rating);
-    if (sort === "R_highToLow") filtered.sort((a, b) => b.rating - a.rating);
-    if (sort === "P_lowToHigh") filtered.sort((a, b) => a.price - b.price);
-    if (sort === "P_highToLow") filtered.sort((a, b) => b.price - a.price);
+    pageNumbers += `
+        <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage - 1})" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+    `;
 
-    if (searchQuery) {
-        filtered = filtered.filter(art => art.title.toLowerCase().includes(searchQuery) || art.artist.toLowerCase().includes(searchQuery));
+    // Add page numbers (1, 2, 3, ...)
+    for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+            pageNumbers += `
+                <li class="page-item ${currentPage === i ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="changePage(${i})">${i}</a>
+                </li>
+            `;
+        } else if (i === currentPage - 3 || i === currentPage + 3) {
+            pageNumbers += `
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            `;
+        }
     }
 
-    displayArtworks(filtered);
+    pageNumbers += `
+        <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${currentPage + 1})" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    `;
+
+    pagination.innerHTML = `
+        <ul class="pagination">
+            ${pageNumbers}
+        </ul>
+    `;
 }
+
+function changePage(page) {
+    const totalPages = Math.ceil(artworks.length / artworksPerPage);
+
+    if (page < 1 || page > totalPages) return; 
+
+    currentPage = page;
+    displayArtworks();  
+}
+
+displayArtworks();
+
 
 document.addEventListener("DOMContentLoaded", () => {
     loadStoredData();
