@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaletteSquare - Buy & Sell Art</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <h1 class="logo">🎨 PaletteSquare</h1>
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search for Art, Artists, or Categories..." oninput="applyFilters()">
+            <button class="search-btn">Search</button>
+        </div>
+        <button class="btn login-btn">Sign Up / Login</button>
+    </nav>
+
+    <!-- Categories & Filters -->
+    <section class="filters">
+        <select id="categoryFilter" onchange="applyFilters()">
+            <option value="all">All Categories</option>
+            <option value="painting">Paintings</option>
+            <option value="digital">Digital Art</option>
+            <option value="sculpture">Sculptures</option>
+            <option value="photography">Photography</option>
+        </select>
+
+        <select id="priceFilter" onchange="applyFilters()">
+            <option value="all">All Prices</option>
+            <option value="low">Under $50</option>
+            <option value="medium">$50 - $200</option>
+            <option value="high">Above $200</option>
+        </select>
+
+        <select id="sortFilter" onchange="applyFilters()">
+            <option value="all">Sort by</option>
+            <option value="R_lowToHigh">Rating: Low to High</option>
+            <option value="R_highToLow">Rating: High to Low</option>
+            <option value="P_lowToHigh">Price: Low to High</option>
+            <option value="P_highToLow">Price: High to Low</option>
+        </select>
+    </section>
+
+    <!-- Artwork Display -->
+    <section class="artworks" id="artworksGrid">
+        <!-- Art pieces will be dynamically loaded here -->
+    </section>
+
+</body>
+</html>
