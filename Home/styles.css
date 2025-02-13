@@ -1,4 +1,3 @@
-/* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +5,6 @@
     font-family: 'Poppins', sans-serif;
 }
 
-/* Color Theme */
 :root {
     --primary: #2C3E50;
     --secondary: #F8F9FA;
@@ -15,7 +13,6 @@
     --light-text: #555;
 }
 
-/* Body */
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #a8c0d8, #f0f0f0);
@@ -29,17 +26,11 @@ body {
     overflow-x: hidden;
 }
 
-/* Navbar
-.navbar {
-    padding: 15px 50px;
-} */
-
 .navbar-brand {
     font-size: 1.8rem;
     font-weight: bold;
 }
 
-/* Search Bar */
 .search-bar {
     width: 50%;
 }
@@ -58,7 +49,6 @@ body {
 }
 
 .filters {
-    /* margin-top: 120px; */
     padding: 15px;
     background: white;
     border-radius: 8px;
@@ -73,7 +63,6 @@ body {
     cursor: pointer;
 }
 
-/* Artwork Display Grid (Original Layout Restored) */
 .artworks {
     column-count: 4;
     column-gap: 20px;
@@ -92,7 +81,23 @@ body {
     transition: transform 0.3s ease-in-out;
 }
 
-/* Restoring Original Image Scaling */
+.artworks .art-piece img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.artworks .art-piece:hover {
+    transform: translateY(-5px);
+}
+
+.artworks .art-piece .art-info {
+    padding: 15px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
 .art-item img {
     width: 100%;
     height: auto;
@@ -105,7 +110,6 @@ body {
     transform: scale(1.05);
 }
 
-/* Like/Dislike Buttons */
 .like-dislike {
     display: flex;
     align-items: center;
@@ -137,6 +141,37 @@ body {
     color: var(--dark-text);
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination .page-item {
+    margin: 0 5px;
+}
+
+.pagination .page-link {
+    padding: 8px 15px;
+    border-radius: 50%;
+    font-size: 16px;
+    background-color: #f1f1f1;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary); 
+    color: white;
+    border: 1px solid var(--primary);
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #f1f1f1;
+    color: #ccc;
+    border: 1px solid #ccc;
+}
+
 footer {
     background-color: #5a89b8;
     color: white;
@@ -148,29 +183,4 @@ footer {
 
 footer .footer-container p {
     margin: 0;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 1024px) {
-    .artworks {
-        column-count: 3;
-    }
-}
-
-@media (max-width: 768px) {
-    .artworks {
-        column-count: 2;
-    }
-    .navbar {
-        flex-direction: column;
-    }
-    .filters {
-        flex-direction: column;
-    }
-}
-
-@media (max-width: 480px) {
-    .artworks {
-        column-count: 1;
-    }
 }
