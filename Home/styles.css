@@ -1,4 +1,3 @@
-/* Global Styles */
 body {
     font-family: 'Poppins', sans-serif;
     background: linear-gradient(to right, #a8c0d8, #f0f0f0);
@@ -12,7 +11,6 @@ body {
     overflow-x: hidden;
 }
 
-/* Navbar */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -20,16 +18,20 @@ body {
     padding: 1.5rem 3rem;
     background-color: #ffffff;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+    flex-wrap: wrap;
 }
 
 .navbar .logo {
     font-size: 1.8rem;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .search-bar {
     display: flex;
     align-items: center;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 .search-bar input {
@@ -38,7 +40,6 @@ body {
     border-radius: 6px;
     border: 1px solid #ddd;
     background-color: #fafafa;
-    margin-right: 10px;
     width: 250px;
     transition: border-color 0.3s ease;
 }
@@ -57,6 +58,7 @@ body {
     font-size: 1rem;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s ease;
+    margin: 10px;
 }
 
 .navbar .btn {
@@ -69,17 +71,16 @@ body {
 }
 
 .navbar .btn:hover,
-.navbar .search-bar button:hover {
+.search-bar button:hover {
     background-color: #5a89b8;
 }
 
-/* Categories & Filters */
 .filters {
     display: flex;
     justify-content: center;
     gap: 20px;
     margin-top: 100px;
-    width: 100%;
+    width: 90%;
     padding: 20px;
 }
 
@@ -97,13 +98,12 @@ body {
     outline: none;
 }
 
-/* Artwork Display */
 .artworks {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     padding: 60px 20px 20px;
-    width: 100%;
+    width: 90%;
 }
 
 .artworks .art-piece {
@@ -169,7 +169,7 @@ footer {
     color: white;
     text-align: center;
     padding: 15px;
-    width: 100%;
+    width: 95%;
     margin-top: auto;  
 }
 
@@ -177,31 +177,12 @@ footer .footer-container p {
     margin: 0;
 }
 
-/* Responsive Design */
 @media (max-width: 1024px) {
     .navbar {
-        padding: 1.2rem 2rem;
+        padding: 1rem 2rem;
     }
-
-    .navbar .logo {
-        font-size: 1.5rem;
-    }
-
     .search-bar input {
         width: 200px;
-    }
-
-    .filters {
-        gap: 15px;
-    }
-
-    .filters select {
-        width: 200px;
-        font-size: 0.9rem;
-    }
-
-    .artworks {
-        padding: 50px 15px 15px;
     }
 }
 
@@ -209,76 +190,59 @@ footer .footer-container p {
     .navbar {
         flex-direction: column;
         align-items: center;
+        padding: 1rem;
     }
-
-    .navbar .search-bar {
+    .search-bar {
+        width: 100%;
+        justify-content: center;
         margin-top: 10px;
-        width: 100%;
     }
-
-    .filters {
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        margin-top: 50px;
+    .search-bar input {
+        width: 60%;
+        font-size: 0.9rem;
     }
+}
 
-    .filters select {
-        width: 100%;
-        margin-bottom: 10px;
+@media (max-width: 600px) {
+    .search-bar input {
+        width: 50%;
+        font-size: 0.8rem;
     }
-
-    .artworks {
-        padding: 40px 10px 10px;
+    .search-bar button {
+        font-size: 0.9rem;
+    }
+    .navbar .btn {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+    footer {
+        width: 90%;
     }
 }
 
 @media (max-width: 480px) {
-    .navbar .logo {
-        font-size: 1.2rem;
+    .navbar {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: center;
     }
-
+    .search-bar {
+        flex-direction: column;
+        width: 100%;
+    }
     .search-bar input {
-        width: 150px;
+        width: 90%;
+        margin-bottom: 10px;
     }
-
-    .search-bar button,
+    .search-bar button {
+        width: 90%;
+    }
     .navbar .btn {
-        padding: 8px 15px;
-        font-size: 0.9rem;
+        width: 100%;
+        text-align: center;
+        margin-top: 10px;
     }
-
-    .filters select {
-        padding: 8px;
-    }
-
-    .artworks {
-        padding: 30px 10px 10px;
-    }
-
-    .artworks .art-piece {
-        box-shadow: none;
-    }
-
-    .artworks .art-piece .art-info {
-        padding: 10px;
-    }
-
-    .artworks .art-piece .art-info h3 {
-        font-size: 1rem;
-    }
-
-    .artworks .art-piece .art-info p {
-        font-size: 0.9rem;
-    }
-
-    .artworks .art-piece .art-info .price {
-        font-size: 1rem;
-    }
-
-    .artworks .art-piece .art-info .buy-btn {
-        padding: 8px 15px;
-        font-size: 0.9rem;
+    footer {
+        width: 90%;
     }
 }
-
