@@ -88,43 +88,88 @@ body {
     cursor: pointer;
 }
 
-/* Artwork Grid */
 .artworks {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    column-count: 4;
+    column-gap: 20px;
     padding: 20px;
 }
 
 .art-item {
+    display: inline-block;
+    width: 100%;
+    margin-bottom: 20px;
+    break-inside: avoid;
     background: white;
     padding: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
+    transition: transform 0.3s ease-in-out;
 }
 
 .art-item img {
     width: 100%;
+    height: auto;
     border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s;
 }
 
-.art-item h3 {
+.art-item img:hover {
+    transform: scale(1.05);
+}
+
+.like-dislike {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 10px;
-    color: var(--primary);
 }
 
-.art-item p {
-    font-size: 14px;
-    color: var(--light-text);
+.like-btn, .dislike-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: transform 0.2s;
 }
 
-/* Responsive */
+.like-btn:hover {
+    transform: scale(1.2);
+    color: green;
+}
+
+.dislike-btn:hover {
+    transform: scale(1.2);
+    color: red;
+}
+
+/* 🔥 ANIMATION */
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .artworks {
+        column-count: 3;
+    }
+}
 @media (max-width: 768px) {
+    .artworks {
+        column-count: 2;
+    }
     .navbar {
         flex-direction: column;
     }
     .filters {
         flex-direction: column;
+    }
+}
+@media (max-width: 480px) {
+    .artworks {
+        column-count: 1;
     }
 }
