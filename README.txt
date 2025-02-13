@@ -13,3 +13,20 @@ It aims to create a seamless, secure, and engaging platform that bridges the gap
 ✅ Enable Custom Commissions – Let buyers request personalized artwork from artists.
 ✅ Secure Transactions – Ensure smooth purchases with payment processing.
 ✅ Foster a Community – Allow users to rate, review, and follow artists for future purchases.
+
+
+Bootstrap Elements:
+
+✅ Navbar & Branding Elements : Defines a Bootstrap navbar for navigation. responsive for all screens
+✅ form-control (Search Bar) : Styles the input field with Bootstrap’s default input styling.
+✅ Buttons : Basic button styling, with different colors.
+✅ form-select (Filter selection) : Styles dropdowns to match Bootstrap’s form elements.
+✅ Carousel : For displaying top arts.
+✅ Grid : Used for Filters placing in grid column.
+✅ pagination : Page navigation, contains 10 images each page.
+✅ accordion : FAQ displayed
+✅ Form validation : for validating login fields.
+✅ Modal : for viewing each art work.
+✅ Cards : For displaying art works.
+✅ hover : Used for buttons and images (Artworks).
+✅ Placeholders : used for Carousel in landing page.
