@@ -21,8 +21,8 @@ const EventSchema = new mongoose.Schema({
     required: true,
   },
   image: {
-    type: String, // Store the image path or URL
-    // This field is optional if the event doesn't have an image
+    type: String,
+    // optional field if no image provided
   },
   createdAt: {
     type: Date,

@@ -1,11 +1,21 @@
-// server/controllers/eventController.js
 const Event = require('../models/Event');
 
-// Create a new event
 const createEvent = async (req, res) => {
   try {
-    const { title, location, date, description, image } = req.body;
-    const newEvent = new Event({ title, location, date, description, image });
+    const { title, location, date, description } = req.body;
+    // If a file is uploaded, Multer attaches it to req.file
+    let imagePath;
+    if (req.file) {
+      // Save the file path relative to your server (or a complete URL if hosting elsewhere)
+      imagePath = '/uploads/' + req.file.filename;
+    }
+    const newEvent = new Event({
+      title,
+      location,
+      date,
+      description,
+      image: imagePath, // this field is optional if no image is uploaded
+    });
     await newEvent.save();
     res.status(201).json({ message: 'Event created successfully', event: newEvent });
   } catch (error) {

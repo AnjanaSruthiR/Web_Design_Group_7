@@ -1,148 +1,146 @@
 // src/pages/Events.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Carousel } from 'react-bootstrap';
 import './Events.css';
 
-const sampleEvents = [
-  {
-    id: 1,
-    title: 'Art & Wine Evening',
-    location: 'New York',
-    date: '2025-05-15',
-    description: 'Enjoy a curated evening of art exhibitions paired with fine wines.',
-    image: '/assets/events/E1.jpg',
-  },
-  {
-    id: 2,
-    title: 'Street Art Festival',
-    location: 'Los Angeles',
-    date: '2025-06-10',
-    description: 'A vibrant celebration of street art featuring live murals and workshops.',
-    image: '/assets/events/E2.webp',
-  },
-  {
-    id: 3,
-    title: 'Modern Art Conference',
-    location: 'San Francisco',
-    date: '2025-07-20',
-    description: 'A conference discussing the latest trends in modern art, with keynote speakers and exhibitions.',
-    image: '/assets/events/E3.jpeg',
-  },
-  {
-    id: 4,
-    title: 'Gallery Night',
-    location: 'Chicago',
-    date: '2025-08-05',
-    description: 'Experience a night at the gallery with exclusive previews of upcoming artists.',
-    image: '/assets/events/E4.jpeg',
-  },
-];
-
 const Events = () => {
+  const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Filter events by location (case-insensitive)
-  const filteredEvents = sampleEvents.filter((event) =>
-    event.location.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Fetch events from the backend when component mounts
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('http://localhost:3002/api/events');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        setEvents(data);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching events:", err);
+        setError(err.message);
+        setLoading(false);
+      }
+    };
 
-  // Sort events by date
-  const sortedEvents = filteredEvents.sort((a, b) => {
+    fetchEvents();
+  }, []);
+
+  // Sorting function (by date)
+  const sortEvents = (a, b) => {
     const dateA = new Date(a.date);
     const dateB = new Date(b.date);
     return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-  });
+  };
 
-  // For demo, assume first 2 events are top events if available.
-  const topEvents = sortedEvents.slice(0, 2);
-  const upcomingEvents = sortedEvents.slice(2);
+  // Top Events: Filter those marked as top events
+  const topEvents = events.filter(event => event.isTopEvent);
+
+  // Upcoming Events: Include ALL events for the list (filter, sort, etc. apply to all events)
+  const upcomingEventsAll = events;
+
+  // Apply search filter (by location) and then sort, to upcoming events
+  const filteredUpcomingEvents = upcomingEventsAll.filter((event) =>
+    event.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const sortedUpcomingEvents = [...filteredUpcomingEvents].sort(sortEvents);
+
+  if (loading) {
+    return (
+      <div className="container text-center my-5">
+        <p>Loading events...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container text-center my-5">
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="events-page">
       <div className="container my-5">
-        <h1 className="text-center mb-4">Upcoming Art Events</h1>
-        
-        {/* Filters and Sorting */}
-        <div className="row mb-4">
-          <div className="col-md-4 offset-md-2">
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search events by location..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <div className="col-md-4">
-            <select
-              className="form-select"
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-            >
-              <option value="asc">Sort by Date: Oldest First</option>
-              <option value="desc">Sort by Date: Newest First</option>
-            </select>
-          </div>
-        </div>
 
-        {/* Top Events Section */}
+        {/* Top Events Carousel Section */}
         {topEvents.length > 0 && (
           <section className="top-events-section mb-5">
             <h2 className="text-center mb-4">Top Events This Month</h2>
-            <div className="row">
+            <Carousel>
               {topEvents.map((event) => (
-                <div key={event.id} className="col-md-6 mb-4">
-                  <div className="card event-card h-100 shadow">
-                    <img src={event.image} className="card-img-top" alt={event.title} />
-                    <div className="card-body">
-                      <h5 className="card-title">{event.title}</h5>
-                      <p className="card-text">
-                        <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
-                      </p>
-                      <p className="card-text">
-                        <strong>Location:</strong> {event.location}
-                      </p>
-                      <p className="card-text">{event.description}</p>
-                    </div>
-                    <div className="card-footer text-center">
-                      <button className="btn btn-outline-primary">Learn More</button>
-                    </div>
-                  </div>
-                </div>
+                <Carousel.Item key={event._id}>
+                  {event.image && (
+                    <img
+                      className="d-block w-100 carousel-img"
+                      // Prepend the backend URL to the image path
+                      src={`http://localhost:3002${event.image}`}
+                      alt={event.title}
+                    />
+                  )}
+                  <Carousel.Caption>
+                    <h3>{event.title}</h3>
+                    <p>
+                      <strong>Date:</strong> {new Date(event.date).toLocaleDateString()} | <strong>Location:</strong> {event.location}
+                    </p>
+                    <p>{event.description}</p>
+                    <button className="btn btn-outline-primary">Learn More</button>
+                  </Carousel.Caption>
+                </Carousel.Item>
               ))}
-            </div>
+            </Carousel>
           </section>
         )}
 
-        {/* Upcoming Events Section */}
+        {/* Filters and Sorting for Upcoming Events */}
         <section className="upcoming-events-section">
+          <div className="row mb-4">
+            <div className="col-md-4 offset-md-2">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Search events by location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="col-md-4">
+              <select
+                className="form-select"
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option value="asc">Sort by: Nearest First</option>
+                <option value="desc">Sort by: Farthest First</option>
+              </select>
+            </div>
+          </div>
           <h2 className="text-center mb-4">More Upcoming Events</h2>
-          <div className="row">
-            {upcomingEvents.length > 0 ? (
-              upcomingEvents.map((event) => (
-                <div key={event.id} className="col-md-6 col-lg-4 mb-4">
-                  <div className="card event-card h-100 shadow">
-                    <img src={event.image} className="card-img-top" alt={event.title} />
-                    <div className="card-body">
-                      <h5 className="card-title">{event.title}</h5>
-                      <p className="card-text">
-                        <strong>Date:</strong> {new Date(event.date).toLocaleDateString()}
-                      </p>
-                      <p className="card-text">
-                        <strong>Location:</strong> {event.location}
-                      </p>
-                      <p className="card-text">{event.description}</p>
-                    </div>
-                    <div className="card-footer text-center">
-                      <button className="btn btn-outline-primary">Learn More</button>
-                    </div>
+          <div className="list-group">
+            {sortedUpcomingEvents.length > 0 ? (
+              sortedUpcomingEvents.map((event) => (
+                <div
+                  key={event._id}
+                  className="list-group-item list-group-item-action flex-column align-items-start"
+                >
+                  <div className="d-flex w-100 justify-content-between">
+                    <h5 className="mb-1">{event.title}</h5>
+                    <small>{new Date(event.date).toLocaleDateString()}</small>
                   </div>
+                  <p className="mb-1"><strong>Location:</strong> {event.location}</p>
+                  <p className="mb-1">{event.description}</p>
+                  <button className="btn btn-outline-primary btn-sm">Learn More</button>
                 </div>
               ))
             ) : (
-              <div className="col-12">
-                <p className="text-center">No events found for the selected location.</p>
-              </div>
+              <p className="text-center">No events found for the selected location.</p>
             )}
           </div>
         </section>
