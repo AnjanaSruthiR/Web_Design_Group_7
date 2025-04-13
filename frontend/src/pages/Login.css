@@ -6,20 +6,6 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
   
-  /* Full-page background with gradient overlay */
-  .login-bg {
-    position: relative;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: 
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      url('../assets/Login.jpeg') no-repeat center center fixed;
-    background-size: cover;
-  }
-  
   /* Row container for two columns */
   .login-content-row {
     display: flex;
@@ -38,13 +24,6 @@ html, body {
     padding: 10rem 5rem;
     color: #fff;
   }
-  
-  /* .info-overlay {
-    background-color: rgba(0, 0, 0, 0.6);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  } */
   
   /* Right login container */
   .login-container {
