@@ -27,6 +27,15 @@ const Navbar = () => {
                 Events
               </Link>
             </li>
+            <li className="nav-item">
+              <Link
+                to="/marketplace"
+                className="nav-link"
+                style={{ fontSize: '1.25rem', fontWeight: '500' }}
+              >
+                ArtWorks
+              </Link>
+            </li>
             {!isLoggedIn ? (
               <>
                 <li className="nav-item">

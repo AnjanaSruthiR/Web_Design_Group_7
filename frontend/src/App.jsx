@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Navbar from './components/Navbar';
 import Events from './pages/Events';
+import Marketplace from './pages/Marketplace';
 
 const AppContent = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Home />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/marketplace" element={<Marketplace />} />
         {/* Add additional routes here */}
       </Routes>
     </>
