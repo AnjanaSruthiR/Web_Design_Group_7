@@ -1,0 +1,45 @@
+.events-page {
+    background-color: #f8f9fa;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
+  .event-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+  }
+  
+  .event-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  }
+  
+  .event-card img {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  /* Section Headings */
+  .top-events-section h2,
+  .upcoming-events-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  /* Card footer styling */
+  .event-card .card-footer {
+    background-color: transparent;
+    border-top: 0;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .top-events-section h2,
+    .upcoming-events-section h2 {
+      font-size: 1.8rem;
+    }
+  }
+  

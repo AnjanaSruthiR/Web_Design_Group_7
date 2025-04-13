@@ -18,6 +18,15 @@ const Navbar = () => {
         <Link className="navbar-brand" to="/">PaletteSquare</Link>
         <div className="collapse navbar-collapse justify-content-end">
           <ul className="navbar-nav mb-2 mb-lg-0">
+            <li className="nav-item">
+              <Link
+                to="/events"
+                className="nav-link"
+                style={{ fontSize: '1.25rem', fontWeight: '500' }}
+              >
+                Events
+              </Link>
+            </li>
             {!isLoggedIn ? (
               <>
                 <li className="nav-item">
