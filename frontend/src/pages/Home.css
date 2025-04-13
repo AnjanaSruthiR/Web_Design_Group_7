@@ -1,0 +1,66 @@
+.hero-section {
+    padding: 4rem 0;
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .hero-section h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .hero-section p {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .hero-buttons .btn {
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .hero-img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .featured-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .artwork-card img {
+    height: 200px;
+    object-fit: cover;
+  }
+  
+  .artwork-card .card-body {
+    text-align: center;
+  }
+  
+  /* Artist Highlights */
+  .artist-highlights h2 {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .artist-card {
+    text-align: center;
+  }
+  
+  .artist-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .hero-section h1 {
+      font-size: 2rem;
+    }
+    .hero-section p {
+      font-size: 1rem;
+    }
+  }
+  
