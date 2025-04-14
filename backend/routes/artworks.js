@@ -1,4 +1,3 @@
-// server/routes/artworks.js
 const express = require('express');
 const router = express.Router();
 const {
@@ -8,9 +7,9 @@ const {
   updateArtwork,
   deleteArtwork
 } = require('../controllers/artworkController');
-const upload = require('../upload'); // Assuming you configured multer in upload.js
+const upload = require('../upload'); // if you are handling image uploads
 
-// Create a new artwork (with file upload for 'img')
+// Create a new artwork (with image upload)
 router.post('/', upload.single('img'), createArtwork);
 
 // Get all artworks

@@ -1,4 +1,3 @@
-// server/models/Artwork.js
 const mongoose = require('mongoose');
 
 const ArtworkSchema = new mongoose.Schema({
