@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './Artwork.css';
- 
+
 const Artwork = () => {
   const { id } = useParams();
   const [artwork, setArtwork] = useState(null);
@@ -9,14 +9,14 @@ const Artwork = () => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
- 
+  const [liked, setLiked] = useState(false);
+
+  // Fetch artwork details
   useEffect(() => {
     const fetchArtwork = async () => {
       try {
         const response = await fetch(`http://localhost:3002/api/artworks/${id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch artwork details');
-        }
+        if (!response.ok) throw new Error('Failed to fetch artwork details');
         const data = await response.json();
         setArtwork(data);
         setLoading(false);
@@ -26,70 +26,89 @@ const Artwork = () => {
         setLoading(false);
       }
     };
+
     fetchArtwork();
   }, [id]);
- 
-// Toggle favorite on click (excerpt)
-const toggleFavorite = async () => {
+
+  // Fetch user favorites to check if this artwork is liked
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+
+      try {
+        const response = await fetch('http://localhost:3002/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        const isLiked = data.favorites?.includes(id);
+        setLiked(isLiked);
+      } catch (err) {
+        console.error('Error fetching user favorites:', err);
+      }
+    };
+
+    fetchFavorites();
+  }, [id]);
+
+  const toggleFavorite = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert("Please log in to like an artwork.");
+      return;
+    }
+  
     try {
-      const response = await fetch(`http://localhost:3002/api/artworks/${artwork._id}/favorite`, {
-        method: 'PATCH'
+      const response = await fetch(`http://localhost:3002/api/users/favorites/${artwork._id}`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
+  
       if (response.ok) {
-        const updatedArtwork = await response.json();
-        setArtwork(updatedArtwork.artwork);
+        const data = await response.json();
+        setLiked(data.isFavorited);
+      } else {
+        const err = await response.json();
+        console.error('Backend error:', err);
+        alert(err.message || 'Failed to update favorite status');
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
-  };  
- 
+  };    
+
   const toggleDescription = () => {
-    setShowFullDescription(prevState => !prevState);
+    setShowFullDescription(prev => !prev);
   };
- 
-  if (loading) {
-    return (
-      <div className="container text-center my-5">
-        <p>Loading artwork details...</p>
-      </div>
-    );
-  }
- 
-  if (error) {
-    return (
-      <div className="container text-center my-5">
-        <p>Error: {error}</p>
-      </div>
-    );
-  }
- 
-  if (!artwork) {
-    return (
-      <div className="container text-center my-5">
-        <p>Artwork not found.</p>
-      </div>
-    );
-  }
- 
-  // Limit description length for the overview tab
-  const descriptionPreview = artwork.description.length > 200
-    ? artwork.description.substring(0, 200) + '...'
-    : artwork.description;
- 
+
+  if (loading) return <div className="container text-center my-5"><p>Loading artwork details...</p></div>;
+  if (error) return <div className="container text-center my-5"><p>Error: {error}</p></div>;
+  if (!artwork) return <div className="container text-center my-5"><p>Artwork not found.</p></div>;
+
+  const descriptionPreview =
+    artwork.description.length > 200
+      ? artwork.description.substring(0, 200) + '...'
+      : artwork.description;
+
   return (
     <div className="artwork-details-page">
       <div className="container my-5">
         <Link to="/marketplace" className="btn btn-outline-info mb-4 back-btn">
           &larr; Back to Marketplace
         </Link>
+
         <div className="artwork-details-container">
           <div className="artwork-header">
             <h2 className="artwork-title">{artwork.title}</h2>
-            <button className={`like-btn ${artwork.fav ? 'liked' : ''}`} onClick={toggleFavorite}>
-  {artwork.fav ? '♥ Liked' : '♡ Like'}
-</button>
+            <button className={`like-btn ${liked ? 'liked' : ''}`} onClick={toggleFavorite}>
+              {liked ? '♥ Liked' : '♡ Like'}
+            </button>
           </div>
+
           <div className="row">
             <div className="col-md-6 artwork-image-wrapper">
               <img
@@ -98,6 +117,7 @@ const toggleFavorite = async () => {
                 className="img-fluid artwork-detail-img"
               />
             </div>
+
             <div className="col-md-6 artwork-info">
               <div className="tabs">
                 <button
@@ -113,16 +133,15 @@ const toggleFavorite = async () => {
                   Specifications
                 </button>
               </div>
+
               {activeTab === 'overview' && (
                 <div className="tab-content">
-                  <p className="artwork-artist"><strong>Artist:</strong> {artwork.artist}</p>
-                  <p className="artwork-category"><strong>Category:</strong> {artwork.category}</p>
-                  <p className="artwork-price"><strong>Price:</strong> ${artwork.price}</p>
-                  <p className="artwork-rating"><strong>Rating:</strong> {artwork.rating} / 5</p>
+                  <p><strong>Artist:</strong> {artwork.artist}</p>
+                  <p><strong>Category:</strong> {artwork.category}</p>
+                  <p><strong>Price:</strong> ${artwork.price}</p>
+                  <p><strong>Rating:</strong> {artwork.rating} / 5</p>
                   <div className="artwork-description-wrapper">
-                    <p className="artwork-description">
-                      <strong>Description:</strong> {showFullDescription ? artwork.description : descriptionPreview}
-                    </p>
+                    <p><strong>Description:</strong> {showFullDescription ? artwork.description : descriptionPreview}</p>
                     {artwork.description.length > 200 && (
                       <button className="read-more-btn" onClick={toggleDescription}>
                         {showFullDescription ? 'Show Less' : 'Read More'}
@@ -131,20 +150,13 @@ const toggleFavorite = async () => {
                   </div>
                 </div>
               )}
+
               {activeTab === 'specs' && (
                 <div className="tab-content">
-                  {artwork.dimensions && (
-                    <p className="artwork-dimensions"><strong>Dimensions:</strong> {artwork.dimensions}</p>
-                  )}
-                  {artwork.medium && (
-                    <p className="artwork-medium"><strong>Medium:</strong> {artwork.medium}</p>
-                  )}
-                  {artwork.yearCreated && (
-                    <p className="artwork-year"><strong>Year Created:</strong> {artwork.yearCreated}</p>
-                  )}
-                  {artwork.discount > 0 && (
-                    <p className="artwork-discount"><strong>Discount:</strong> {artwork.discount}%</p>
-                  )}
+                  {artwork.dimensions && <p><strong>Dimensions:</strong> {artwork.dimensions}</p>}
+                  {artwork.medium && <p><strong>Medium:</strong> {artwork.medium}</p>}
+                  {artwork.yearCreated && <p><strong>Year Created:</strong> {artwork.yearCreated}</p>}
+                  {artwork.discount > 0 && <p><strong>Discount:</strong> {artwork.discount}%</p>}
                 </div>
               )}
             </div>
@@ -154,7 +166,5 @@ const toggleFavorite = async () => {
     </div>
   );
 };
- 
+
 export default Artwork;
- 
- 

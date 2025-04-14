@@ -1,27 +1,28 @@
+// src/pages/Marketplace.jsx
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Marketplace.css';
- 
+
 const Marketplace = () => {
   const [artworks, setArtworks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [sortBy, setSortBy] = useState('priceAsc'); 
+  const [sortBy, setSortBy] = useState('priceAsc'); // default sort: price ascending
   const [showFilterModal, setShowFilterModal] = useState(false);
- 
+
   // Advanced Filters
   const [priceMin, setPriceMin] = useState('');
   const [priceMax, setPriceMax] = useState('');
   const [minRating, setMinRating] = useState('');
   const [inStockOnly, setInStockOnly] = useState(false);
- 
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 9; // Adjust as needed
- 
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
- 
+
   // Fetch artworks from the backend on mount
   useEffect(() => {
     const fetchArtworks = async () => {
@@ -39,27 +40,27 @@ const Marketplace = () => {
         setLoading(false);
       }
     };
- 
+
     fetchArtworks();
   }, []);
- 
+
   // Filtering function – if title/artist are missing, fallback to empty string
   const filterArtworks = (art) => {
     const title = art.title || "";
     const artist = art.artist || "";
- 
+
     const matchesSearch =
       title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       artist.toLowerCase().includes(searchTerm.toLowerCase());
- 
+
     const price = Number(art.price);
     const matchesPrice =
       (priceMin === '' || price >= Number(priceMin)) &&
       (priceMax === '' || price <= Number(priceMax));
- 
+
     const matchesRating = minRating === '' || Number(art.rating) >= Number(minRating);
     const matchesStock = !inStockOnly || art.inStock === true;
- 
+
     return matchesSearch && matchesPrice && matchesRating && matchesStock;
   };
 
@@ -78,11 +79,11 @@ const Marketplace = () => {
         return a.title.localeCompare(b.title);
     }
   };
- 
+
   // Apply filter and sort
   const filteredArtworks = artworks.filter(filterArtworks);
   const sortedArtworks = [...filteredArtworks].sort(sortFunction);
- 
+
   // Pagination calculations
   const totalItems = sortedArtworks.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
@@ -90,7 +91,7 @@ const Marketplace = () => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
- 
+
   // Modal open/close handlers
   const handleOpenFilters = () => setShowFilterModal(true);
   const handleCloseFilters = () => setShowFilterModal(false);
@@ -104,7 +105,7 @@ const Marketplace = () => {
     setShowFilterModal(false);
     setCurrentPage(1);
   };
- 
+
   if (loading) {
     return (
       <div className="container text-center my-5">
@@ -112,7 +113,7 @@ const Marketplace = () => {
       </div>
     );
   }
- 
+
   if (error) {
     return (
       <div className="container text-center my-5">
@@ -120,7 +121,7 @@ const Marketplace = () => {
       </div>
     );
   }
- 
+
   return (
     <div className="marketplace-page">
       <div className="container my-4">
@@ -161,7 +162,7 @@ const Marketplace = () => {
             </Button>
           </div>
         </div>
- 
+
         {/* Artwork Cards */}
         <div className="row">
           {paginatedArtworks.length > 0 ? (
@@ -188,7 +189,7 @@ const Marketplace = () => {
             <p className="text-center">No artworks found.</p>
           )}
         </div>
- 
+
         {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="pagination-controls d-flex justify-content-center my-4">
@@ -218,7 +219,7 @@ const Marketplace = () => {
           </div>
         )}
       </div>
- 
+
       {/* Advanced Filters Modal */}
       <Modal show={showFilterModal} onHide={handleCloseFilters}>
         <Modal.Header closeButton>
@@ -280,7 +281,5 @@ const Marketplace = () => {
     </div>
   );
 };
- 
+
 export default Marketplace;
- 
- 

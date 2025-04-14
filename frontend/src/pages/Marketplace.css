@@ -1,10 +1,12 @@
+/* src/pages/Marketplace.css */
+
 /* Overall page styling */
 .marketplace-page {
   background-color: #ffffff;
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
- 
+
 /* Artwork card styling */
 .artwork-card {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -14,48 +16,48 @@
   background: #ffffff;
   cursor: pointer;
 }
- 
+
 .artwork-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
- 
+
 .artwork-card img {
   height: 250px;
   object-fit: cover;
   width: 100%;
 }
- 
+
 .card-body {
   text-align: center;
   padding: 1rem;
   color: #333;
 }
- 
+
 .card-title {
   font-weight: 600;
   margin-bottom: 0.5rem;
 }
- 
+
 .card-text {
   margin-bottom: 0.5rem;
   font-size: 0.95rem;
   color: #666;
 }
- 
+
 .card-footer {
   background-color: transparent;
   border-top: 0;
   padding: 0.5rem;
 }
- 
+
 /* Input/select styling */
 input.form-control,
 select.form-select {
   border-radius: 5px;
   box-shadow: none;
 }
- 
+
 /* Pagination Controls */
 /* Modern Circular Pagination Style */
 .pagination-controls {
@@ -65,7 +67,7 @@ select.form-select {
   gap: 10px; /* Space between buttons */
   margin-top: 20px;
 }
- 
+
 .pagination-controls button {
   width: 40px;
   height: 40px;
@@ -80,37 +82,37 @@ select.form-select {
   justify-content: center;
   cursor: pointer;
 }
- 
+
 .pagination-controls button:hover {
   background-color: #007bff;
   color: #fff;
   transform: scale(1.1);
 }
- 
+
 .pagination-controls button.active {
   background-color: #007bff;
   color: #fff;
 }
- 
+
 .pagination-controls button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
- 
+
 /* Optionally style the Previous/Next arrows */
 .pagination-controls .arrow {
   font-size: 1.1rem;
 }
- 
+
 /* Advanced Filters Modal */
 .modal-title {
   font-weight: bold;
 }
- 
+
 .modal-body label {
   font-weight: 500;
 }
- 
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .artwork-card img {
@@ -120,5 +122,3 @@ select.form-select {
     padding: 0 1rem;
   }
 }
- 
- 

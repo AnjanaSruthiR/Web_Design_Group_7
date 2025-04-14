@@ -1,3 +1,4 @@
+// src/pages/Events.jsx
 import React, { useState, useEffect } from 'react';
 import { Carousel } from 'react-bootstrap';
 import './Events.css';
@@ -8,6 +9,10 @@ const Events = () => {
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  
+  // Pagination state for upcoming events
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Display 5 events initially and per load
 
   // Fetch events from the backend when component mounts
   useEffect(() => {
@@ -40,14 +45,26 @@ const Events = () => {
   // Top Events: Filter those marked as top events
   const topEvents = events.filter(event => event.isTopEvent);
 
-  // Upcoming Events: Include ALL events for the list (filter, sort, etc. apply to all events)
+  // Upcoming Events: All events (filter, sort, etc. apply to all events)
   const upcomingEventsAll = events;
-
-  // Apply search filter (by location) and then sort, to upcoming events
   const filteredUpcomingEvents = upcomingEventsAll.filter((event) =>
     event.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const sortedUpcomingEvents = [...filteredUpcomingEvents].sort(sortEvents);
+
+  // Pagination for Upcoming Events: Show first (currentPage * itemsPerPage)
+  const paginatedUpcomingEvents = sortedUpcomingEvents.slice(0, currentPage * itemsPerPage);
+
+  // Load More handler
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  };
+
+  // Reset pagination when filters change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   if (loading) {
     return (
@@ -68,18 +85,16 @@ const Events = () => {
   return (
     <div className="events-page">
       <div className="container my-5">
-
         {/* Top Events Carousel Section */}
         {topEvents.length > 0 && (
           <section className="top-events-section mb-5">
-            <h2 className="text-center mb-4">Top Events This Month</h2>
+            <h2 className="text-center mb-4">Top Events</h2>
             <Carousel>
               {topEvents.map((event) => (
                 <Carousel.Item key={event._id}>
                   {event.image && (
                     <img
                       className="d-block w-100 carousel-img"
-                      // Prepend the backend URL to the image path
                       src={`http://localhost:3002${event.image}`}
                       alt={event.title}
                     />
@@ -107,7 +122,7 @@ const Events = () => {
                 className="form-control"
                 placeholder="Search events by location..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
               />
             </div>
             <div className="col-md-4">
@@ -121,10 +136,10 @@ const Events = () => {
               </select>
             </div>
           </div>
-          <h2 className="text-center mb-4">More Upcoming Events</h2>
+          <h2 className="text-center mb-4">Upcoming Events</h2>
           <div className="list-group">
-            {sortedUpcomingEvents.length > 0 ? (
-              sortedUpcomingEvents.map((event) => (
+            {paginatedUpcomingEvents.length > 0 ? (
+              paginatedUpcomingEvents.map((event) => (
                 <div
                   key={event._id}
                   className="list-group-item list-group-item-action flex-column align-items-start"
@@ -142,6 +157,14 @@ const Events = () => {
               <p className="text-center">No events found for the selected location.</p>
             )}
           </div>
+          {/* Load More Button */}
+          {paginatedUpcomingEvents.length < sortedUpcomingEvents.length && (
+            <div className="d-flex justify-content-center my-4">
+              <button className="btn btn-primary" onClick={handleLoadMore}>
+                Load More
+              </button>
+            </div>
+          )}
         </section>
       </div>
     </div>

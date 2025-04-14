@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
-import './Login.css'; // Reusing the same CSS as Login
+import './Login.css';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +61,19 @@ const Register = () => {
   };
 
   return (
-    <div className="login-bg">
+    <div className="login-bg" style={{
+      position: 'relative',
+      width: '100%',
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: `
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('/assets/Login.jpeg') no-repeat center center fixed
+      `,
+      backgroundSize: 'cover'
+    }}>
       <div className="login-content-row">
         {/* LEFT SECTION: Info with semi-transparent overlay */}
         <div className="info-section">
