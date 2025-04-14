@@ -62,7 +62,22 @@ const Marketplace = () => {
  
     return matchesSearch && matchesPrice && matchesRating && matchesStock;
   };
- 
+
+  // Sorting function
+  const sortFunction = (a, b) => {
+    switch (sortBy) {
+      case 'priceAsc':
+        return a.price - b.price;
+      case 'priceDesc':
+        return b.price - a.price;
+      case 'ratingAsc':
+        return a.rating - b.rating;
+      case 'ratingDesc':
+        return b.rating - a.rating;
+      default:
+        return a.title.localeCompare(b.title);
+    }
+  };
  
   // Apply filter and sort
   const filteredArtworks = artworks.filter(filterArtworks);
