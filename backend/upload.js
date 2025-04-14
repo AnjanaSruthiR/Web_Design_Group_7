@@ -1,4 +1,3 @@
-// server/upload.js
 const multer = require('multer');
 const path = require('path');
 
@@ -28,7 +27,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 1024 * 1024 * 5 } // Limit file size to 5 MB (adjust as needed)
+  limits: { fileSize: 1024 * 1024 * 5 } // Limit file size to 5 MB
 });
 
 module.exports = upload;
