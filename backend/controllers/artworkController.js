@@ -66,7 +66,18 @@ const getArtworkById = async (req, res) => {
   }
 };
 
-
+// Update an artwork by ID
+const updateArtwork = async (req, res) => {
+  try {
+    // If updating image, consider handling file upload here as well
+    const artwork = await Artwork.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!artwork) return res.status(404).json({ message: 'Artwork not found' });
+    res.status(200).json({ message: 'Artwork updated successfully', artwork });
+  } catch (error) {
+    console.error('Error updating artwork:', error);
+    res.status(500).json({ message: 'Error updating artwork' });
+  }
+};
 
 // Delete an artwork by ID
 const deleteArtwork = async (req, res) => {
@@ -80,4 +91,4 @@ const deleteArtwork = async (req, res) => {
   }
 };
 
-module.exports = { createArtwork, getAllArtworks, getArtworkById, deleteArtwork };
+module.exports = { createArtwork, getAllArtworks, getArtworkById, updateArtwork, deleteArtwork };
