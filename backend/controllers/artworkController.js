@@ -32,8 +32,9 @@ const createArtwork = async (req, res) => {
         medium,
         yearCreated,
         inStock,
-        discount
-      });
+        discount,
+        createdBy: req.user.id,
+      });      
   
       await newArtwork.save();
       res.status(201).json({ message: 'Artwork created successfully', artwork: newArtwork });

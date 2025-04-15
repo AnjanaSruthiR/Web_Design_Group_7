@@ -1,0 +1,8 @@
+.seller-dashboard .artwork-card {
+    transition: transform 0.2s ease;
+  }
+  
+  .seller-dashboard .artwork-card:hover {
+    transform: scale(1.02);
+  }
+  

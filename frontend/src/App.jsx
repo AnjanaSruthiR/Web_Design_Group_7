@@ -9,6 +9,7 @@ import Events from './pages/Events';
 import Marketplace from './pages/Marketplace';
 import Artwork from './pages/Artwork'
 import Wishlist from './pages/Wishlist';
+import SellerDashboard from './pages/SellerDashboard';
 
 const AppContent = () => {
   const location = useLocation();
@@ -26,6 +27,7 @@ const AppContent = () => {
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/artwork/:id" element={<Artwork />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/sellerDashboard" element={<SellerDashboard />} />
       </Routes>
     </>
   );

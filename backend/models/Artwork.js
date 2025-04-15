@@ -12,6 +12,7 @@ const ArtworkSchema = new mongoose.Schema({
   dimensions: { type: String },
   medium: { type: String },
   yearCreated: { type: Number },
+  createdBy: {  type: mongoose.Schema.Types.ObjectId,  ref: 'user',  required: true},
   inStock: { type: Boolean, default: true },
   discount: { type: Number, default: 0 }
 }, { timestamps: true });
