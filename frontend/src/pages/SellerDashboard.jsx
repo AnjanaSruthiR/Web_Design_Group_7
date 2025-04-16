@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import './SellerDashboard.css';
+import { useNavigate } from 'react-router-dom';
+import {
+  Box, Grid, Typography, Card, CardMedia, CardContent, CardActions,
+  Button, Container, Paper
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 
 const SellerDashboard = () => {
   const [artworks, setArtworks] = useState([]);
@@ -18,7 +22,6 @@ const SellerDashboard = () => {
       });
 
       if (!response.ok) throw new Error('Failed to fetch artworks');
-
       const data = await response.json();
       setArtworks(data);
     } catch (err) {
@@ -32,6 +35,8 @@ const SellerDashboard = () => {
   useEffect(() => {
     fetchSellerArtworks();
   }, []);
+
+  const totalRevenue = artworks.reduce((sum, art) => sum + parseFloat(art.price), 0);
 
   const handleDelete = async (artworkId) => {
     const token = localStorage.getItem('token');
@@ -51,46 +56,74 @@ const SellerDashboard = () => {
   };
 
   return (
-    <div className="container my-5 seller-dashboard">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Artworks</h1>
-        <Link to="/upload" className="btn btn-success">➕ Add New Artwork</Link>
-      </div>
+    <Container maxWidth="lg">
+      <Box my={5}>
+        <Typography variant="h4" gutterBottom>My Artworks</Typography>
 
-      {loading && <div className="text-center">Loading...</div>}
-      {error && <div className="text-danger text-center">Error: {error}</div>}
+        <Grid container spacing={3} mb={3}>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} sx={{ p: 2 }}>
+              <Typography variant="h6">Total Artworks</Typography>
+              <Typography variant="h4">{artworks.length}</Typography>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} sx={{ p: 2 }}>
+              <Typography variant="h6">Total Revenue</Typography>
+              <Typography variant="h4">${totalRevenue.toFixed(2)}</Typography>
+            </Paper>
+          </Grid>
+        </Grid>
 
-      {artworks.length === 0 && !loading ? (
-        <div className="text-center">
-          <p>You haven't listed any artworks yet.</p>
-          <Link to="/upload" className="btn btn-primary">Upload Artwork</Link>
-        </div>
-      ) : (
-        <div className="row">
-          {artworks.map((art) => (
-            <div className="col-md-4 mb-4" key={art._id}>
-              <div className="card h-100 shadow artwork-card">
-                <img
-                  src={`http://localhost:3002${art.image}`}
-                  className="card-img-top"
-                  alt={art.title}
-                />
-                <div className="card-body">
-                  <h5 className="card-title">{art.title}</h5>
-                  <p className="card-text"><strong>Price:</strong> ${art.price}</p>
-                  <p className="card-text text-muted"><small>{art.category}</small></p>
-                </div>
-                <div className="card-footer d-flex justify-content-between">
-                  <Link to={`/artwork/${art._id}`} className="btn btn-outline-info btn-sm">View</Link>
-                  <Link to={`/edit/${art._id}`} className="btn btn-outline-secondary btn-sm">Edit</Link>
-                  <button className="btn btn-outline-danger btn-sm" onClick={() => handleDelete(art._id)}>Delete</button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+        {loading ? (
+          <Typography>Loading...</Typography>
+        ) : error ? (
+          <Typography color="error">{error}</Typography>
+        ) : artworks.length === 0 ? (
+          <Box textAlign="center" mt={5}>
+            <Typography>You haven't listed any artworks yet.</Typography>
+            <Button variant="contained" onClick={() => navigate('/uploadArtwork')} startIcon={<AddIcon />}>
+              Upload Artwork
+            </Button>
+          </Box>
+        ) : (
+          <Grid container spacing={3}>
+            {artworks.map((art) => (
+              <Grid item xs={12} sm={6} md={4} key={art._id}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="200"
+                    image={`http://localhost:3002${art.image}`}
+                    alt={art.title}
+                  />
+                  <CardContent>
+                    <Typography variant="h6">{art.title}</Typography>
+                    <Typography color="text.secondary">${art.price}</Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small" onClick={() => navigate(`/artwork/${art._id}`)}>View</Button>
+                    <Button size="small" onClick={() => navigate(`/edit/${art._id}`)}>Edit</Button>
+                    <Button size="small" color="error" onClick={() => handleDelete(art._id)}>Delete</Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Box>
+
+      <Box position="fixed" bottom={16} right={16}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate('/uploadArtwork')}
+          startIcon={<AddIcon />}
+        >
+          Add Artwork
+        </Button>
+      </Box>
+    </Container>
   );
 };
 

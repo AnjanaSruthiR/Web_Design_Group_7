@@ -35,7 +35,7 @@ router.get('/', getAllArtworks);
 router.get('/:id', getArtworkById);
 
 // Update an artwork by ID
-router.put('/:id', updateArtwork);
+router.put('/:id', authMiddleware, upload.single('img'), updateArtwork);
 
 // Delete an artwork by ID
 router.delete('/:id', deleteArtwork);

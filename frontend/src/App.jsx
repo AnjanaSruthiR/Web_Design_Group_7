@@ -10,6 +10,8 @@ import Marketplace from './pages/Marketplace';
 import Artwork from './pages/Artwork'
 import Wishlist from './pages/Wishlist';
 import SellerDashboard from './pages/SellerDashboard';
+import UploadArtwork from './pages/UploadArtwork';
+import EditArtwork from './pages/EditArtwork';
 
 const AppContent = () => {
   const location = useLocation();
@@ -28,6 +30,8 @@ const AppContent = () => {
         <Route path="/artwork/:id" element={<Artwork />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/sellerDashboard" element={<SellerDashboard />} />
+        <Route path="/uploadArtwork" element={<UploadArtwork />} />
+        <Route path="/edit/:id" element={<EditArtwork />} />
       </Routes>
     </>
   );
