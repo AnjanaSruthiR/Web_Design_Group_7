@@ -1,4 +1,3 @@
-// server/controllers/artworkController.js
 const Artwork = require('../models/Artwork');
 
 const createArtwork = async (req, res) => {

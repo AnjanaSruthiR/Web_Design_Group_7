@@ -1,6 +1,7 @@
-// src/App.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setUser } from './features/auth/authSlice'; 
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,12 +13,24 @@ import Wishlist from './pages/Wishlist';
 import SellerDashboard from './pages/SellerDashboard';
 import UploadArtwork from './pages/UploadArtwork';
 import EditArtwork from './pages/EditArtwork';
+import Cart from './pages/Cart';
+import PaymentSuccess from './pages/PaymentSuccess';
+
 
 const AppContent = () => {
   const location = useLocation();
-  // Optionally, if you don't want the Navbar on auth pages:
-  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  const dispatch = useDispatch();
 
+  // ✅ Rehydrate Redux from localStorage on app load
+  useEffect(() => {
+    const stored = localStorage.getItem('userData');
+    if (stored) {
+      dispatch(setUser(JSON.parse(stored)));
+    }
+  }, [dispatch]); 
+
+  const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+  
   return (
     <>
       {!isAuthPage && <Navbar />}
@@ -29,6 +42,8 @@ const AppContent = () => {
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/artwork/:id" element={<Artwork />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/paymentsuccess" element={<PaymentSuccess />} />
         <Route path="/sellerDashboard" element={<SellerDashboard />} />
         <Route path="/uploadArtwork" element={<UploadArtwork />} />
         <Route path="/edit/:id" element={<EditArtwork />} />

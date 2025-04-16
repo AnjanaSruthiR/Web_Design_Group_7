@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
@@ -47,6 +46,15 @@ const Navbar = () => {
                 style={{ fontSize: '1.25rem', fontWeight: '500' }}
               >
                 ArtWorks
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/cart"
+                className="nav-link"
+                style={{ fontSize: '1.25rem', fontWeight: '500' }}
+              >
+                Cart
               </Link>
             </li>
             {!isLoggedIn ? (

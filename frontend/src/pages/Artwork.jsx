@@ -1,15 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 import './Artwork.css';
 
 const Artwork = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [artwork, setArtwork] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [liked, setLiked] = useState(false);
+  
+  // Get the current logged-in user from Redux
+  const user = useSelector((state) => state.auth.user);
 
   // Fetch artwork details
   useEffect(() => {
@@ -79,10 +85,32 @@ const Artwork = () => {
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
-  };    
+  };
+
+  // Function to handle adding artwork to the cart
+  const handleAddToCart = async () => {
+    // Check if user is logged in; if not, alert and navigate to login page
+    if (!user) {
+      alert("Please log in to add items to your cart.");
+      navigate('/login');
+      return;
+    }
+
+    try {
+      await axios.post('http://localhost:3002/api/cart/add', {
+        userId: user._id,
+        artworkId: artwork._id,
+        quantity: 1,
+      });
+      alert('Artwork added to your cart!');
+    } catch (err) {
+      console.error("Error adding artwork to cart:", err);
+      alert("Failed to add artwork to the cart.");
+    }
+  };
 
   const toggleDescription = () => {
-    setShowFullDescription(prev => !prev);
+    setShowFullDescription((prev) => !prev);
   };
 
   if (loading) return <div className="container text-center my-5"><p>Loading artwork details...</p></div>;
@@ -141,13 +169,19 @@ const Artwork = () => {
                   <p><strong>Price:</strong> ${artwork.price}</p>
                   <p><strong>Rating:</strong> {artwork.rating} / 5</p>
                   <div className="artwork-description-wrapper">
-                    <p><strong>Description:</strong> {showFullDescription ? artwork.description : descriptionPreview}</p>
+                    <p>
+                      <strong>Description:</strong> {showFullDescription ? artwork.description : descriptionPreview}
+                    </p>
                     {artwork.description.length > 200 && (
                       <button className="read-more-btn" onClick={toggleDescription}>
                         {showFullDescription ? 'Show Less' : 'Read More'}
                       </button>
                     )}
                   </div>
+                  {/* Add-to-Cart Button */}
+                  <button className="btn btn-primary mt-3" onClick={handleAddToCart}>
+                    Add to Cart
+                  </button>
                 </div>
               )}
 
