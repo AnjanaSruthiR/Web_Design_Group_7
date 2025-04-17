@@ -43,6 +43,14 @@ app.use('/api/cart', cartRoutes);
 const paymentRoutes = require('./routes/paymentsuccess');
 app.use('/api/payment', paymentRoutes);
 
+// Orders (User Dashboard)
+const orderRoutes = require('./routes/order');
+app.use('/api/orders', orderRoutes);
+
+// Admin Dashboard
+const adminRoutes = require('./routes/admin');
+app.use('/api/admin', adminRoutes);
+
 const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

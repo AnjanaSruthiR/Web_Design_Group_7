@@ -198,7 +198,7 @@ const Marketplace = () => {
               onClick={() => setCurrentPage(prev => prev - 1)}
               disabled={currentPage === 1}
             >
-              Previous
+              Prev
             </button>
             {Array.from({ length: totalPages }, (_, index) => (
               <button

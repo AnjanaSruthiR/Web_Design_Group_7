@@ -1,6 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { toggleFavorite, getFavorites } = require('../controllers/userController');
+const {
+  toggleFavorite,
+  getFavorites,
+  getUserById,
+  updateUser,
+  updatePassword,
+  deleteUser
+} = require('../controllers/userController');
 const authMiddleware = require('../middleware/auth');
 const User = require('../models/User');
 const Artwork = require('../models/Artwork');
@@ -47,4 +54,10 @@ router.post('/favorites/:artworkId', authMiddleware, async (req, res) => {
     }
   });
   
+  router.get('/:id', getUserById);
+  router.put('/:id', authMiddleware, updateUser);
+  router.put('/:id/password', authMiddleware, updatePassword);
+  router.delete('/:id', authMiddleware, deleteUser);
+  
+
 module.exports = router;

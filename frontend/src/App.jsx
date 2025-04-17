@@ -10,11 +10,14 @@ import Events from './pages/Events';
 import Marketplace from './pages/Marketplace';
 import Artwork from './pages/Artwork'
 import Wishlist from './pages/Wishlist';
+import UserDashboard from './pages/UserDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import SellerDashboard from './pages/SellerDashboard';
 import UploadArtwork from './pages/UploadArtwork';
 import EditArtwork from './pages/EditArtwork';
 import Cart from './pages/Cart';
 import PaymentSuccess from './pages/PaymentSuccess';
+import EventDetails from './pages/EventDetails';
 
 
 const AppContent = () => {
@@ -39,11 +42,14 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Home />} />
         <Route path="/events" element={<Events />} />
+        <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/artwork/:id" element={<Artwork />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/paymentsuccess" element={<PaymentSuccess />} />
+        <Route path="/userdashboard" element={<UserDashboard />} />
+        <Route path="/admindashboard" element={<AdminDashboard />} />
         <Route path="/sellerDashboard" element={<SellerDashboard />} />
         <Route path="/uploadArtwork" element={<UploadArtwork />} />
         <Route path="/edit/:id" element={<EditArtwork />} />
