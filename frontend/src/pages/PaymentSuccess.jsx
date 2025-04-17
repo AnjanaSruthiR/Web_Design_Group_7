@@ -22,13 +22,17 @@ const PaymentSuccess = () => {
         // 2. Prepare order payload
         const orderData = {
           userId: user._id,
-          artworks: cart.items.map(item => ({
-            artworkId: item.artworkId._id,
-            quantity: item.quantity,
-            priceAtTime: item.priceAtTime
-          })),
-          total: cart.items.reduce((sum, item) => sum + item.priceAtTime * item.quantity, 0)
-        };
+          artworks: cart.items
+            .filter(item => item.artworkId) // ✅ Filter out nulls!
+            .map(item => ({
+              artworkId: item.artworkId._id,
+              quantity: item.quantity,
+              priceAtTime: item.priceAtTime
+            })),
+          total: cart.items
+            .filter(item => item.artworkId) // ✅ Again, only valid entries
+            .reduce((sum, item) => sum + item.priceAtTime * item.quantity, 0)
+        };        
 
         // 3. Create the order
         await axios.post('http://localhost:3002/api/orders/create', orderData);
