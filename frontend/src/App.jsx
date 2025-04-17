@@ -64,14 +64,9 @@ const AppContent = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/paymentsuccess"
-          element={
-            <PrivateRoute>
-              <PaymentSuccess />
-            </PrivateRoute>
-          }
-        />
+        
+        <Route path="/success" element={<PaymentSuccess />} />
+        <Route path="/paymentsuccess" element={<PaymentSuccess />} />    
 
         <Route
           path="/userdashboard"
