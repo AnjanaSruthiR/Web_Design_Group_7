@@ -5,10 +5,8 @@ import { jwtDecode } from 'jwt-decode';
 const Navbar = () => {
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(true);
-
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
-
   let dashboardPath = '/dashboard';
   let role = null;
 
@@ -23,7 +21,7 @@ const Navbar = () => {
       console.error('Invalid token:', e);
     }
   }
-
+ 
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
@@ -50,6 +48,7 @@ const Navbar = () => {
 
         {/* Collapsible menu */}
         <div className={`collapse navbar-collapse justify-content-end ${!isCollapsed ? 'show' : ''}`} id="navbarNav">
+
           <ul className="navbar-nav mb-2 mb-lg-0">
             <li className="nav-item">
               <Link to="/events" className="nav-link">Events</Link>
@@ -105,10 +104,16 @@ const Navbar = () => {
               </li>
             )}
           </ul>
-        </div>
-      </div>
-    </nav>
+          </li>
+          )}
+          </ul>
+          </div>
+          </div>
+          </nav>
+
   );
 };
-
+ 
 export default Navbar;
+
+ 
