@@ -7,7 +7,8 @@ import {
   Button,
   Paper,
   Box,
-  Grid
+  Grid,
+  colors
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
@@ -97,8 +98,15 @@ const UploadArtwork = () => {
   };
 
   return (
-    <Container maxWidth="md" sx={{ mt: 5, mb: 5, p: 3 }}>
-      <Typography variant="h4" gutterBottom>Upload New Artwork</Typography>
+    <Container maxWidth="xl" style={{
+      background: `
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('/assets/Login.jpeg') no-repeat center center fixed
+      `,
+      backgroundSize: 'cover',
+      padding: '64px 200px'
+    }}>
+      <Typography variant="h3" gutterBottom style={{ color: '#fff' }}>Upload New Artwork</Typography>
       {validationError && (
         <Typography variant="body1" color="error" sx={{ mb: 2 }}>
           {validationError}
