@@ -13,6 +13,7 @@ const Artwork = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [cartQuantity, setCartQuantity] = useState(0);
 
   // Get the current logged-in user from Redux
   const user = useSelector((state) => state.auth.user);
@@ -36,6 +37,21 @@ const Artwork = () => {
 
     fetchArtwork();
   }, [id]);
+
+  useEffect(() => {
+    const fetchCartQuantity = async () => {
+      if (user && artwork?._id) {
+        try {
+          const res = await axios.get(`http://localhost:3002/api/cart/${user._id}`);
+          const item = res.data.items.find(i => i.artworkId?._id === artwork._id);
+          if (item) setCartQuantity(item.quantity);
+        } catch (err) {
+          console.error("Failed to fetch cart quantity:", err);
+        }
+      }
+    };
+    fetchCartQuantity();
+  }, [user, artwork]);
 
   // Fetch user favorites to check if this artwork is liked
   useEffect(() => {
@@ -90,26 +106,54 @@ const Artwork = () => {
 
   // Function to handle adding artwork to the cart
   const handleAddToCart = async () => {
-    // Check if user is logged in; if not, alert and navigate to login page
     if (!user) {
       alert("Please log in to add items to your cart.");
       navigate('/login');
       return;
     }
-
+  
+    if (artwork.stock <= 0) {
+      alert("Sorry, this artwork is currently out of stock.");
+      return;
+    }
+  
     try {
       await axios.post('http://localhost:3002/api/cart/add', {
         userId: user._id,
         artworkId: artwork._id,
         quantity: 1,
       });
-      alert('Artwork added to your cart!');
+      setCartQuantity(1);
     } catch (err) {
-      console.error("Error adding artwork to cart:", err);
-      alert("Failed to add artwork to the cart.");
+      console.error("Add to cart error:", err);
+      alert("Failed to add artwork to cart.");
     }
   };
-
+  
+  const handleIncrement = async () => {
+    if (cartQuantity >= artwork.stock) return;
+    await updateCartQuantity(cartQuantity + 1);
+  };
+  
+  const handleDecrement = async () => {
+    if (cartQuantity <= 1) return;
+    await updateCartQuantity(cartQuantity - 1);
+  };
+  
+  const updateCartQuantity = async (newQty) => {
+    try {
+      await axios.put('http://localhost:3002/api/cart/update', {
+        userId: user._id,
+        artworkId: artwork._id,
+        quantity: newQty
+      });
+      setCartQuantity(newQty);
+    } catch (err) {
+      console.error("Update cart quantity error:", err);
+      alert("Could not update cart.");
+    }
+  };
+  
   const toggleDescription = () => {
     setShowFullDescription((prev) => !prev);
   };
@@ -180,11 +224,34 @@ const Artwork = () => {
                     )}
                   </div>
                   {!isAdmin && (
-                    <button className="btn btn-primary mt-3" onClick={handleAddToCart}>
-                      Add to Cart
-                    </button>
+                    cartQuantity === 0 ? (
+                      <button
+                        className="btn btn-primary mt-3"
+                        onClick={handleAddToCart}
+                        disabled={artwork.stock <= 0}
+                      >
+                        {artwork.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                      </button>
+                    ) : (
+                      <div className="d-flex align-items-center gap-2 mt-3">
+                        <button
+                          className="btn btn-outline-secondary"
+                          onClick={handleDecrement}
+                          disabled={cartQuantity <= 1}
+                        >
+                          −
+                        </button>
+                        <span>{cartQuantity}</span>
+                        <button
+                          className="btn btn-outline-secondary"
+                          onClick={handleIncrement}
+                          disabled={cartQuantity >= artwork.stock}
+                        >
+                          +
+                        </button>
+                      </div>
+                    )
                   )}
-
                 </div>
               )}
 

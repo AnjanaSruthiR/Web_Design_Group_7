@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import {
   Box, Button, Typography, Container, Card, CardContent,
-  Chip, Stack, Divider, useTheme, Fade, Grow, Skeleton
+  Chip, Stack, Divider, Fade, Grow, Skeleton
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EventIcon from '@mui/icons-material/Event';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 
 const EventDetails = () => {
-  const theme = useTheme();
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -165,6 +164,7 @@ const EventDetails = () => {
                 }}
               >
                 <iframe
+                  title="Google Map - Event Location"
                   src={`https://maps.google.com/maps?q=${encodeURIComponent(event.location)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
                   width="100%"
                   height="350"
