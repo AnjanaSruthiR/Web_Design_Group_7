@@ -77,17 +77,21 @@ const Cart = () => {
 
   const handleCheckout = async () => {
     try {
-      const response = await axios.post('http://localhost:3002/api/payment/create-checkout-session', {
-        cartItems: cart.items.map(item => ({
-          title: item.artworkId.title,
-          price: item.priceAtTime,
-          quantity: item.quantity
-        }))
-      });
+      // filter out any items whose artworkId is null
+      const validItems = cart.items.filter(item => item.artworkId);
+      const lineItems = validItems.map(item => ({
+        title: item.artworkId.title || 'Unknown artwork',
+        price: item.priceAtTime,
+        quantity: item.quantity
+      }));
 
+      const response = await axios.post(
+        'http://localhost:3002/api/payment/create-checkout-session',
+        { cartItems: lineItems }
+      );
       window.location.href = response.data.url;
-    } catch (error) {
-      console.error('Checkout error:', error);
+    } catch (err) {
+      console.error('Checkout error:', err);
       alert('Something went wrong while redirecting to Stripe.');
     }
   };
@@ -160,37 +164,49 @@ const Cart = () => {
           <Grid item xs={12} md={7} className="cart-left">
             <Typography variant="h5" fontWeight={700} gutterBottom>Cart</Typography>
 
-            {cart.items.map((item, index) => (
-              <Card className="cart-item-card" key={index}>
-                <CardMedia
-                  component="img"
-                  className="cart-image"
-                  image={`http://localhost:3002${item.artworkId.image}`}
-                  alt={item.artworkId.title}
-                />
-                <CardContent sx={{ flex: 1 }}>
-                  <Typography variant="subtitle1" fontWeight={600}>
-                    {item.artworkId.title}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" gutterBottom>
-                    Price: ${item.priceAtTime.toFixed(2)}
-                  </Typography>
+            {cart.items
+  .filter(item => item.artworkId)               // drop nulls
+  .map((item, index) => (
+    <Card className="cart-item-card" key={index}>
+      <CardMedia
+        component="img"
+        className="cart-image"
+        // optional‐chain to be extra safe:
+        image={
+          item.artworkId.image
+            ? `http://localhost:3002${item.artworkId.image}`
+            : '/placeholder.png'
+        }
+        alt={item.artworkId.title || 'Artwork'}
+      />
+      <CardContent sx={{ flex: 1 }}>
+        <Typography variant="subtitle1" fontWeight={600}>
+          {item.artworkId.title || 'Unknown title'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          Price: ${item.priceAtTime?.toFixed(2) ?? '0.00'}
+        </Typography>
 
-                  <Box className="cart-actions">
-                    <IconButton onClick={() => updateQuantity(item.artworkId._id, Math.max(1, item.quantity - 1))}>
-                      <Remove />
-                    </IconButton>
-                    <Typography>{item.quantity}</Typography>
-                    <IconButton onClick={() => updateQuantity(item.artworkId._id, item.quantity + 1)}>
-                      <Add />
-                    </IconButton>
-                    <IconButton onClick={() => removeItem(item.artworkId._id)} color="error">
-                      <Delete />
-                    </IconButton>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
+        <Box className="cart-actions">
+          <IconButton
+            onClick={() =>
+              updateQuantity(item.artworkId._id, Math.max(1, item.quantity - 1))
+            }
+          >
+            <Remove />
+          </IconButton>
+          <Typography>{item.quantity}</Typography>
+          <IconButton onClick={() => updateQuantity(item.artworkId._id, item.quantity + 1)}>
+            <Add />
+          </IconButton>
+          <IconButton onClick={() => removeItem(item.artworkId._id)} color="error">
+            <Delete />
+          </IconButton>
+        </Box>
+      </CardContent>
+    </Card>
+  ))
+}
 
             <Box className="cart-promo">
               <TextField

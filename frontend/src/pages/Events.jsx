@@ -1,5 +1,6 @@
 // src/pages/Events.jsx
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Carousel } from 'react-bootstrap';
 import './Events.css';
 
@@ -9,7 +10,7 @@ const Events = () => {
   const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   // Pagination state for upcoming events
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Display 5 events initially and per load
@@ -105,7 +106,9 @@ const Events = () => {
                       <strong>Date:</strong> {new Date(event.date).toLocaleDateString()} | <strong>Location:</strong> {event.location}
                     </p>
                     <p>{event.description}</p>
-                    <button className="btn btn-outline-primary">Learn More</button>
+                    <Link to={`/events/${event._id}`}>
+                      <button className="btn btn-outline-primary">Learn More</button>
+                    </Link>
                   </Carousel.Caption>
                 </Carousel.Item>
               ))}
@@ -150,7 +153,9 @@ const Events = () => {
                   </div>
                   <p className="mb-1"><strong>Location:</strong> {event.location}</p>
                   <p className="mb-1">{event.description}</p>
-                  <button className="btn btn-outline-primary btn-sm">Learn More</button>
+                  <Link to={`/events/${event._id}`}>
+                      <button className="btn btn-outline-primary">Learn More</button>
+                  </Link>
                 </div>
               ))
             ) : (

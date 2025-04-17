@@ -3,10 +3,8 @@ const Event = require('../models/Event');
 const createEvent = async (req, res) => {
   try {
     const { title, location, date, description } = req.body;
-    // If a file is uploaded, Multer attaches it to req.file
     let imagePath;
     if (req.file) {
-      // Save the file path relative to your server (or a complete URL if hosting elsewhere)
       imagePath = '/uploads/' + req.file.filename;
     }
     const newEvent = new Event({
@@ -14,7 +12,7 @@ const createEvent = async (req, res) => {
       location,
       date,
       description,
-      image: imagePath, // this field is optional if no image is uploaded
+      image: imagePath,
     });
     await newEvent.save();
     res.status(201).json({ message: 'Event created successfully', event: newEvent });
@@ -27,11 +25,28 @@ const createEvent = async (req, res) => {
 // Get all events
 const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find().sort({ date: 1 }); // sorting events by date ascending
+    const events = await Event.find().sort({ date: 1 });
     res.status(200).json(events);
   } catch (error) {
     console.error('Error fetching events:', error);
     res.status(500).json({ message: 'Error fetching events' });
+  }
+};
+
+// Get an event by id
+const getEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+    res.status(200).json(event);
+  } catch (err) {
+    console.error('Error fetching event by ID:', err);
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid event ID' });
+    }
+    res.status(500).json({ message: 'Server error fetching event' });
   }
 };
 
@@ -60,4 +75,4 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = { createEvent, getAllEvents, updateEvent, deleteEvent };
+module.exports = { createEvent, getAllEvents, getEventById, updateEvent, deleteEvent };
