@@ -1,4 +1,3 @@
-// server/models/User.js
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -36,6 +35,12 @@ const UserSchema = new mongoose.Schema({
       return this.role === 'user' ? 'buyer' : undefined;
     }
   },
+  favorites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Artwork'
+    }
+  ]
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', UserSchema);

@@ -1,7 +1,8 @@
-// client/src/pages/Login.jsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../features/auth/authSlice';
 import './Login.css';
 
 const Login = () => {
@@ -9,6 +10,7 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,18 +26,24 @@ const Login = () => {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
+  
       if (data.token) {
         localStorage.setItem('token', data.token);
+
+        localStorage.setItem('userData', JSON.stringify(data.user));
+        dispatch(setUser(data.user));
+  
         setMessage('Login successful');
         navigate('/');
       } else {
-        setMessage(data.message);
+        setMessage(data.message || 'Login failed');
       }
     } catch (error) {
       console.error('Login error:', error);
       setMessage('Login failed');
     }
   };
+  
 
   return (
     <div
@@ -50,7 +58,7 @@ const Login = () => {
           linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
           url('/assets/Login.jpeg') no-repeat center center fixed
         `,
-        backgroundSize: 'cover'
+        backgroundSize: 'cover',
       }}
     >
       <div className="login-content-row">

@@ -1,93 +1,149 @@
 // src/pages/Home.jsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Carousel } from 'react-bootstrap';
 import './Home.css';
 
 const Home = () => {
   // Check if the user is logged in by seeing if a token is stored
   const isLoggedIn = !!localStorage.getItem('token');
+  const [featuredArtworks, setFeaturedArtworks] = useState([]);
+  const [topEvents, setTopEvents] = useState([]);
+
+  useEffect(() => {
+    // Fetch artworks and extract top 3 from the digital category sorted by rating descending
+    const fetchArtworks = async () => {
+      try {
+        const response = await fetch('http://localhost:3002/api/artworks');
+        if (!response.ok) {
+          throw new Error('Failed to fetch artworks');
+        }
+        const data = await response.json();
+        const top3Digital = data
+          .filter((art) => art.category.toLowerCase() === 'digital')
+          .sort((a, b) => b.rating - a.rating)
+          .slice(0, 3);
+        setFeaturedArtworks(top3Digital);
+      } catch (err) {
+        console.error('Error fetching artworks:', err);
+      }
+    };
+
+    // Fetch events and filter for those marked as top events
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch('http://localhost:3002/api/events');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
+        const data = await response.json();
+        const top = data.filter((event) => event.isTopEvent);
+        setTopEvents(top);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+      }
+    };
+
+    fetchArtworks();
+    fetchEvents();
+  }, []);
 
   return (
     <div className="home">
-      {/* Hero Section */}
+      {/* HERO SECTION */}
       <section className="hero-section">
-        <div className="container">
+        <div className="hero-overlay"></div>
+        <div className="hero-content container">
           <div className="row align-items-center">
-            {/* Left: Text & Calls-to-Action */}
             <div className="col-md-6">
-              <h1>Discover Unique Artworks</h1>
-              <p>
-                Welcome to PaletteSquare – your interactive art marketplace. Explore innovative artworks and connect with creative talents from around the world.
+              <h1 className="hero-title">Discover Unique Artworks</h1>
+              <p className="hero-subtitle">
+                Welcome to PaletteSquare – your interactive art marketplace. Explore cutting-edge art and connect with visionary creators.
               </p>
               <div className="hero-buttons">
-                {/* Conditionally show "Join Now" only if NOT logged in */}
                 {!isLoggedIn && (
-                  <Link className="btn btn-primary me-2" to="/register">
+                  <Link className="btn btn-primary hero-btn me-2" to="/register">
                     Join Now
                   </Link>
                 )}
-                <Link className="btn btn-outline-secondary" to="/marketplace">
+                <Link className="btn btn-outline-secondary hero-btn" to="/marketplace">
                   Browse Artworks
                 </Link>
               </div>
             </div>
-            {/* Right: Hero Image */}
-            <div className="col-md-6">
-              <img
-                src="/assets/Home.png"
-                alt="Featured Artwork"
-                className="img-fluid hero-img"
-              />
+            <div className="col-md-6 hero-img-container">
+              <img src="/assets/Home.png" alt="Featured Artwork" className="img-fluid hero-img" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Artworks Section */}
+      {/* FEATURED DIGITAL ARTWORKS CAROUSEL */}
       <section className="featured-section my-5">
         <div className="container">
-          <h2 className="text-center mb-4">Featured Artworks</h2>
-          <div className="row">
-            {/* Artwork Item */}
-            <div className="col-md-4 mb-4">
-              <div className="card artwork-card">
-                <img src="/assets/Arts/DigitalArt6.jpg" alt="Artwork 1" className="card-img-top" />
-                <div className="card-body">
-                  <h5 className="card-title">Crimson Crystal Peaks</h5>
-                  <p className="card-text">Aurora Lumen</p>
-                </div>
-              </div>
-            </div>
-            {/* Artwork Item */}
-            <div className="col-md-4 mb-4">
-              <div className="card artwork-card">
-                <img src="/assets/Arts/DigitalArt7.jpg" alt="Artwork 2" className="card-img-top" />
-                <div className="card-body">
-                  <h5 className="card-title">Prismatic Forest</h5>
-                  <p className="card-text">Evelynn Nighthollow</p>
-                </div>
-              </div>
-            </div>
-            {/* Artwork Item */}
-            <div className="col-md-4 mb-4">
-              <div className="card artwork-card">
-                <img src="/assets/Arts/DigitalArt8.jpg" alt="Artwork 3" className="card-img-top" />
-                <div className="card-body">
-                  <h5 className="card-title">Twilight Vale</h5>
-                  <p className="card-text">Mikael Gustafsson</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <h2 className="text-center mb-4">Featured Digital Artworks</h2>
+          {featuredArtworks.length > 0 ? (
+            <Carousel pause="hover" className="featured-carousel">
+              {featuredArtworks.map((art) => (
+                <Carousel.Item key={art._id || art.id}>
+                  {art.image && (
+                    <img
+                      className="d-block w-100 carousel-img"
+                      src={`http://localhost:3002${art.image}`}
+                      alt={art.title}
+                    />
+                  )}
+                  <Carousel.Caption className="carousel-caption-custom">
+                    <h3>{art.title}</h3>
+                    <p>
+                      <strong>Rating:</strong> {art.rating} / 5&nbsp;|&nbsp;
+                      <strong>Artist:</strong> {art.artist}
+                    </p>
+                  </Carousel.Caption>
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          ) : (
+            <p className="text-center">No featured artworks available.</p>
+          )}
         </div>
       </section>
 
-      {/* Artist Highlights Section */}
+      {/* TOP EVENTS CAROUSEL */}
+      {topEvents.length > 0 && (
+        <section className="top-events-section my-5">
+          <div className="container">
+            <h2 className="text-center mb-4">Top Events</h2>
+            <Carousel pause="hover" className="events-carousel">
+              {topEvents.map((event) => (
+                <Carousel.Item key={event._id}>
+                  {event.image && (
+                    <img
+                      className="d-block w-100 carousel-img"
+                      src={`http://localhost:3002${event.image}`}
+                      alt={event.title}
+                    />
+                  )}
+                  <Carousel.Caption className="carousel-caption-custom">
+                    <h3>{event.title}</h3>
+                    <p>
+                      <strong>Date:</strong> {new Date(event.date).toLocaleDateString()} | <strong>Location:</strong> {event.location}
+                    </p>
+                    <p>{event.description}</p>
+                    <button className="btn btn-outline-primary">Learn More</button>
+                  </Carousel.Caption>
+                </Carousel.Item>
+              ))}
+            </Carousel>
+          </div>
+        </section>
+      )}
+
+      {/* ARTIST HIGHLIGHTS SECTION */}
       <section className="artist-highlights my-5">
         <div className="container">
           <h2 className="text-center mb-4">Artist Highlights</h2>
           <div className="row">
-            {/* Repeat for each artist */}
             <div className="col-md-3 mb-4">
               <div className="artist-card text-center">
                 <img

@@ -1,4 +1,3 @@
-// server/models/Artwork.js
 const mongoose = require('mongoose');
 
 const ArtworkSchema = new mongoose.Schema({
@@ -13,8 +12,10 @@ const ArtworkSchema = new mongoose.Schema({
   dimensions: { type: String },
   medium: { type: String },
   yearCreated: { type: Number },
+  createdBy: {  type: mongoose.Schema.Types.ObjectId,  ref: 'user',  required: true},
   inStock: { type: Boolean, default: true },
-  discount: { type: Number, default: 0 }
+  discount: { type: Number, default: 0 },
+  artworkId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Artwork', ArtworkSchema);

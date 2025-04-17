@@ -1,11 +1,26 @@
-// src/components/Navbar.jsx
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
+
+  let dashboardPath = '/dashboard';
+  let role = null;
+  
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+      role = decoded.role;
+      if (decoded.role === 'admin') dashboardPath = '/adminDashboard';
+      else if (decoded.userType === 'seller') dashboardPath = '/sellerDashboard';
+      else dashboardPath = '/userDashboard';
+    } catch (e) {
+      console.error('Invalid token:', e);
+    }
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -36,6 +51,14 @@ const Navbar = () => {
                 ArtWorks
               </Link>
             </li>
+              {/* only show Cart if user is logged in and NOT an admin */}
+              {isLoggedIn && role !== 'admin' && (
+              <li className="nav-item">
+                <Link to="/cart" className="nav-link" style={{ fontSize: '1.25rem', fontWeight: 500 }}>
+                  Cart
+                </Link>
+              </li>
+            )}
             {!isLoggedIn ? (
               <>
                 <li className="nav-item">
@@ -63,11 +86,13 @@ const Navbar = () => {
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                   <li>
-                    <Link className="dropdown-item" to="/dashboard">Dashboard</Link>
+                    <Link className="dropdown-item" to={dashboardPath}>Dashboard</Link>
                   </li>
+                  <li><hr className="dropdown-divider" /></li>
                   <li>
-                    <hr className="dropdown-divider" />
+                    <Link className="dropdown-item" to="/wishlist">Wishlist</Link>
                   </li>
+                  <li><hr className="dropdown-divider" /></li>
                   <li>
                     <button className="dropdown-item" onClick={handleLogout}>Logout</button>
                   </li>

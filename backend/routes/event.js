@@ -1,19 +1,28 @@
-// server/routes/event.js
 const express = require('express');
 const router = express.Router();
-const { createEvent, getAllEvents, updateEvent, deleteEvent } = require('../controllers/eventController');
-const upload = require('../upload'); // if you have file upload configuration
+const upload = require('../upload');
 
-// Create new event with file upload support
+const {
+  createEvent,
+  getAllEvents,
+  getEventById,
+  updateEvent,
+  deleteEvent
+} = require('../controllers/eventController');
+
+// Create new event (with optional image upload)
 router.post('/', upload.single('image'), createEvent);
 
 // Get all events
 router.get('/', getAllEvents);
 
-// Update an event by id
-router.put('/:id', updateEvent);
+// Get one event by ID
+router.get('/:id', getEventById);
 
-// Delete an event by id
+// Update an event by ID (you can also allow image upload here if desired)
+router.put('/:id', upload.single('image'), updateEvent);
+
+// Delete an event by ID
 router.delete('/:id', deleteEvent);
 
 module.exports = router;
