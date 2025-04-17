@@ -7,8 +7,7 @@ import {
   Button,
   Paper,
   Box,
-  Grid,
-  colors
+  Grid
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 

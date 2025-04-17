@@ -22,7 +22,7 @@ import { useNavigate } from 'react-router-dom';
 import './Cart.css';
 
 import { loadStripe } from '@stripe/stripe-js';
-const stripePromise = loadStripe('pk_test_51REDzrPc6dvswIWIcNPs6GhoUMmGuLK4wEV8ViU2fa2rdnRMXBVpB3IWmMkqiPte04QHhItEvwnmtY3BaMAN3xCM00m381huG5');
+await loadStripe('pk_test_51REDzrPc6dvswIWIcNPs6GhoUMmGuLK4wEV8ViU2fa2rdnRMXBVpB3IWmMkqiPte04QHhItEvwnmtY3BaMAN3xCM00m381huG5');
 
 const Cart = () => {
   const [cart, setCart] = useState(null);
@@ -35,7 +35,7 @@ const Cart = () => {
   // Get the user from the Redux store
   const user = useSelector(state => state?.auth?.user);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (user?._id) {
       axios.get(`http://localhost:3002/api/cart/${user._id}`)
@@ -165,48 +165,51 @@ const Cart = () => {
             <Typography variant="h5" fontWeight={700} gutterBottom>Cart</Typography>
 
             {cart.items
-  .filter(item => item.artworkId)               // drop nulls
-  .map((item, index) => (
-    <Card className="cart-item-card" key={index}>
-      <CardMedia
-        component="img"
-        className="cart-image"
-        // optional‐chain to be extra safe:
-        image={
-          item.artworkId.image
-            ? `http://localhost:3002${item.artworkId.image}`
-            : '/placeholder.png'
-        }
-        alt={item.artworkId.title || 'Artwork'}
-      />
-      <CardContent sx={{ flex: 1 }}>
-        <Typography variant="subtitle1" fontWeight={600}>
-          {item.artworkId.title || 'Unknown title'}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" gutterBottom>
-          Price: ${item.priceAtTime?.toFixed(2) ?? '0.00'}
-        </Typography>
+              .filter(item => item.artworkId)               // drop nulls
+              .map((item, index) => (
+                <Card className="cart-item-card" key={index}>
+                  <CardMedia
+                    component="img"
+                    className="cart-image"
+                    // optional‐chain to be extra safe:
+                    image={
+                      item.artworkId.image
+                        ? `http://localhost:3002${item.artworkId.image}`
+                        : '/placeholder.png'
+                    }
+                    alt={item.artworkId.title || 'Artwork'}
+                  />
+                  <CardContent sx={{ flex: 1 }}>
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      {item.artworkId.title || 'Unknown title'}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" gutterBottom>
+                      Price: ${item.priceAtTime?.toFixed(2) ?? '0.00'}
+                    </Typography>
 
-        <Box className="cart-actions">
-          <IconButton
-            onClick={() =>
-              updateQuantity(item.artworkId._id, Math.max(1, item.quantity - 1))
+                    <Box className="cart-actions">
+                      <IconButton
+                        onClick={() =>
+                          updateQuantity(item.artworkId._id, Math.max(1, item.quantity - 1))
+                        }
+                      >
+                        <Remove />
+                      </IconButton>
+                      <Typography>{item.quantity}</Typography>
+                      <IconButton
+                        onClick={() => updateQuantity(item.artworkId._id, item.quantity + 1)}
+                        disabled={item.quantity >= item.artworkId.stock}
+                      >
+                        <Add />
+                      </IconButton>
+                      <IconButton onClick={() => removeItem(item.artworkId._id)} color="error">
+                        <Delete />
+                      </IconButton>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))
             }
-          >
-            <Remove />
-          </IconButton>
-          <Typography>{item.quantity}</Typography>
-          <IconButton onClick={() => updateQuantity(item.artworkId._id, item.quantity + 1)}>
-            <Add />
-          </IconButton>
-          <IconButton onClick={() => removeItem(item.artworkId._id)} color="error">
-            <Delete />
-          </IconButton>
-        </Box>
-      </CardContent>
-    </Card>
-  ))
-}
 
             <Box className="cart-promo">
               <TextField
