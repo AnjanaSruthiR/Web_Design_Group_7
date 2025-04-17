@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoutes';
+import PrivateRoute from './components/PrivateRoute';
 import { useDispatch } from 'react-redux';
 import { setUser } from './features/auth/authSlice';
 import Home from './pages/Home';
@@ -75,15 +75,6 @@ const AppContent = () => {
           }
         />
         <Route
-          path="/userdashboard"
-          element={
-            <PrivateRoute roles={['user']}>
-              <UserDashboard />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
           path="/admindashboard"
           element={
             <PrivateRoute roles={['admin']}>
@@ -91,11 +82,19 @@ const AppContent = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/userdashboard"
+          element={
+            <PrivateRoute roles={['user']} usertypes={['buyer']}>
+              <UserDashboard />
+            </PrivateRoute>
+          }
+        />
 
         <Route
           path="/sellerDashboard"
           element={
-            <PrivateRoute roles={['seller']}>
+            <PrivateRoute roles={['user']} usertypes={['seller']}>
               <SellerDashboard />
             </PrivateRoute>
           }
@@ -104,7 +103,7 @@ const AppContent = () => {
         <Route
           path="/uploadArtwork"
           element={
-            <PrivateRoute roles={['seller']}>
+            <PrivateRoute roles={['user']} usertypes={['seller']}>
               <UploadArtwork />
             </PrivateRoute>
           }
@@ -113,7 +112,7 @@ const AppContent = () => {
         <Route
           path="/edit/:id"
           element={
-            <PrivateRoute roles={['seller']}>
+            <PrivateRoute roles={['user']} usertypes={['seller']}>
               <EditArtwork />
             </PrivateRoute>
           }
