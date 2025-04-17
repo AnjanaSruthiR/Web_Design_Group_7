@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoutes';
+import PrivateRoute from './components/PrivateRoute';
 import { useDispatch } from 'react-redux';
 import { setUser } from './features/auth/authSlice';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/LoginSignup/Login';
+import Register from './pages/LoginSignup/Register';
 import Navbar from './components/Navbar';
-import Events from './pages/Events';
-import Marketplace from './pages/Marketplace';
-import Artwork from './pages/Artwork'
+import Events from './pages/Events/Events';
+import Marketplace from './pages/ArtworkMarketplace/Marketplace';
+import Artwork from './pages/ArtworkMarketplace/Artwork'
 import Wishlist from './pages/Wishlist';
-import UserDashboard from './pages/UserDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import SellerDashboard from './pages/SellerDashboard';
-import UploadArtwork from './pages/UploadArtwork';
-import EditArtwork from './pages/EditArtwork';
-import Cart from './pages/Cart';
-import PaymentSuccess from './pages/PaymentSuccess';
-import EventDetails from './pages/EventDetails';
+import UserDashboard from './pages/User/UserDashboard';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import SellerDashboard from './pages/Seller/SellerDashboard';
+import UploadArtwork from './pages/Seller/UploadArtwork';
+import EditArtwork from './pages/Seller/EditArtwork';
+import Cart from './pages/Cart/Cart';
+import PaymentSuccess from './pages/Cart/PaymentSuccess';
+import EventDetails from './pages/Events/EventDetails';
 
 const AppContent = () => {
   const location = useLocation();
@@ -75,15 +75,6 @@ const AppContent = () => {
           }
         />
         <Route
-          path="/userdashboard"
-          element={
-            <PrivateRoute roles={['user']}>
-              <UserDashboard />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
           path="/admindashboard"
           element={
             <PrivateRoute roles={['admin']}>
@@ -91,11 +82,19 @@ const AppContent = () => {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/userdashboard"
+          element={
+            <PrivateRoute roles={['user']} usertypes={['buyer']}>
+              <UserDashboard />
+            </PrivateRoute>
+          }
+        />
 
         <Route
           path="/sellerDashboard"
           element={
-            <PrivateRoute roles={['seller']}>
+            <PrivateRoute roles={['user']} usertypes={['seller']}>
               <SellerDashboard />
             </PrivateRoute>
           }
@@ -104,7 +103,7 @@ const AppContent = () => {
         <Route
           path="/uploadArtwork"
           element={
-            <PrivateRoute roles={['seller']}>
+            <PrivateRoute roles={['user']} usertypes={['seller']}>
               <UploadArtwork />
             </PrivateRoute>
           }
@@ -113,7 +112,7 @@ const AppContent = () => {
         <Route
           path="/edit/:id"
           element={
-            <PrivateRoute roles={['seller']}>
+            <PrivateRoute roles={['user']} usertypes={['seller']}>
               <EditArtwork />
             </PrivateRoute>
           }
