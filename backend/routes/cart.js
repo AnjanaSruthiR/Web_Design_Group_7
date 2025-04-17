@@ -106,13 +106,22 @@ router.delete('/remove/:userId/:artworkId', async (req, res) => {
 });
 
 // CLEAR cart after checkout
-router.post('/clear/:userId', async (req, res) => {
+router.delete('/clear/:userId', async (req, res) => {
   try {
-    await Cart.findOneAndDelete({ userId: req.params.userId });
-    res.status(200).json({ message: 'Cart cleared' });
+    const { userId } = req.params;
+    const cart = await Cart.findOne({ userId });
+
+    if (!cart) return res.status(404).json({ error: 'Cart not found' });
+
+    cart.items = []; // empty the cart
+    await cart.save();
+
+    res.status(200).json({ message: 'Cart cleared successfully' });
   } catch (err) {
-    res.status(500).json({ error: 'Error clearing cart' });
+    console.error('Clear Cart Error:', err);
+    res.status(500).json({ error: 'Failed to clear cart' });
   }
 });
+
 
 module.exports = router;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoutes';
 import { useDispatch } from 'react-redux';
@@ -20,20 +20,22 @@ import Cart from './pages/Cart';
 import PaymentSuccess from './pages/PaymentSuccess';
 import EventDetails from './pages/EventDetails';
 
-
 const AppContent = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  const [rehydrated, setRehydrated] = useState(false);
 
-  // ✅ Rehydrate Redux from localStorage on app load
   useEffect(() => {
     const stored = localStorage.getItem('userData');
     if (stored) {
       dispatch(setUser(JSON.parse(stored)));
     }
+    setRehydrated(true);
   }, [dispatch]);
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+  if (!rehydrated) return null;
 
   return (
     <>
@@ -64,10 +66,14 @@ const AppContent = () => {
             </PrivateRoute>
           }
         />
-        
-        <Route path="/success" element={<PaymentSuccess />} />
-        <Route path="/paymentsuccess" element={<PaymentSuccess />} />    
-
+        <Route
+          path="/success"
+          element={
+            <PrivateRoute>
+              <PaymentSuccess />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/userdashboard"
           element={
@@ -89,7 +95,7 @@ const AppContent = () => {
         <Route
           path="/sellerDashboard"
           element={
-            <PrivateRoute >
+            <PrivateRoute roles={['seller']}>
               <SellerDashboard />
             </PrivateRoute>
           }
@@ -98,7 +104,7 @@ const AppContent = () => {
         <Route
           path="/uploadArtwork"
           element={
-            <PrivateRoute >
+            <PrivateRoute roles={['seller']}>
               <UploadArtwork />
             </PrivateRoute>
           }
@@ -107,12 +113,49 @@ const AppContent = () => {
         <Route
           path="/edit/:id"
           element={
-            <PrivateRoute>
+            <PrivateRoute roles={['seller']}>
               <EditArtwork />
             </PrivateRoute>
           }
         />
-        <Route path="/unauthorized" element={<h2>Unauthorized</h2>} />
+
+        <Route
+          path="/unauthorized"
+          element={
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '80vh',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                padding: '2rem',
+              }}
+            >
+              <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🔒</div>
+              <h2 style={{ color: 'crimson', fontWeight: 'bold', fontSize: '2rem' }}>Unauthorized Access</h2>
+              <p style={{ color: '#555', maxWidth: '500px', margin: '1rem auto' }}>
+                You don’t have permission to view this page. Please log in with appropriate access or go back to home.
+              </p>
+              <button
+                onClick={() => window.location.href = '/'}
+                style={{
+                  backgroundColor: '#1976d2',
+                  color: 'white',
+                  padding: '10px 24px',
+                  border: 'none',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  marginTop: '1rem',
+                }}
+              >
+                🔙 Back to Home
+              </button>
+            </div>
+          }
+        />
       </Routes >
     </>
   );

@@ -9,9 +9,11 @@ router.post('/create', async (req, res) => {
     await newOrder.save();
     res.status(201).json({ message: 'Order created successfully' });
   } catch (err) {
+    console.error('ORDER SAVE ERROR ❌', err);
     res.status(500).json({ error: 'Failed to save order' });
   }
 });
+
 
 router.get('/:userId', async (req, res) => {
   try {

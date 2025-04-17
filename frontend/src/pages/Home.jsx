@@ -9,6 +9,7 @@ const Home = () => {
   const isLoggedIn = !!localStorage.getItem('token');
   const [featuredArtworks, setFeaturedArtworks] = useState([]);
   const [topEvents, setTopEvents] = useState([]);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     // Fetch artworks and extract top 3 from the digital category sorted by rating descending
@@ -48,6 +49,18 @@ const Home = () => {
     fetchEvents();
   }, []);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('userData');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        setUserName(user.name || user.username || '');
+      } catch (e) {
+        console.error('Error parsing userData:', e);
+      }
+    }
+  }, []);
+  
   return (
     <div className="home">
       {/* HERO SECTION */}
@@ -58,7 +71,9 @@ const Home = () => {
             <div className="col-md-6">
               <h1 className="hero-title">Discover Unique Artworks</h1>
               <p className="hero-subtitle">
-                Welcome to PaletteSquare – your interactive art marketplace. Explore cutting-edge art and connect with visionary creators.
+                {isLoggedIn && userName
+                  ? `Welcome back, ${userName}! 🎉 Explore cutting-edge art and connect with visionary creators.`
+                  : `Welcome to PaletteSquare – your interactive art marketplace. Explore cutting-edge art and connect with visionary creators.`}
               </p>
               <div className="hero-buttons">
                 {!isLoggedIn && (
