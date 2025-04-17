@@ -55,12 +55,16 @@ const AdminDashboard = () => {
   const [topArtworks, setTopArtworks] = useState([]);
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState([]);
 
   // --- Forms for users & artworks (unchanged) ---
   const [newUser, setNewUser] = useState({ username: "", email: "", password: "", role: "user" });
   const [newArtwork, setNewArtwork] = useState({ title: "", description: "", price: "" });
   const [artworkImage, setArtworkImage] = useState(null);
   const [editingArtworkId, setEditingArtworkId] = useState(null);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [eventForm, setEventForm] = useState({ title: "", location: "", date: "", description: "" });
+  const [eventImage, setEventImage] = useState(null);
 
   // --- Admin’s own profile & password forms ---
   const [editingProfile, setEditingProfile] = useState(false);
@@ -82,18 +86,20 @@ const AdminDashboard = () => {
 
     const fetchAll = async () => {
       try {
-        const [uRes, oRes, rRes, tRes, aRes] = await Promise.all([
+        const [uRes, oRes, rRes, tRes, aRes, eRes] = await Promise.all([
           axios.get("http://localhost:3002/api/admin/users"),
           axios.get("http://localhost:3002/api/admin/orders"),
           axios.get("http://localhost:3002/api/admin/revenue"),
           axios.get("http://localhost:3002/api/admin/top-artworks"),
           axios.get("http://localhost:3002/api/artworks"),
+          axios.get("http://localhost:3002/api/events"),
         ]);
         setUsers(uRes.data);
         setOrders(oRes.data);
         setRevenue(rRes.data.totalRevenue);
         setTopArtworks(tRes.data);
         setArtworks(aRes.data);
+        setEvents(eRes.data);
       } catch (e) {
         console.error("Admin fetch error", e);
       } finally {
@@ -213,20 +219,70 @@ const AdminDashboard = () => {
     }
   };
 
+  // — EVENT handlers
+  const handleEventSubmit = async () => {
+    const fd = new FormData();
+    Object.entries(eventForm).forEach(([k, v]) => fd.append(k, v));
+    if (eventImage) fd.append("image", eventImage);
+
+    try {
+      let res;
+      if (editingEvent) {
+        res = await axios.put(`http://localhost:3002/api/events/${editingEvent}`, fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setEvents(evts =>
+          evts.map(e => e._id === editingEvent ? res.data.event : e)
+        );
+      } else {
+        res = await axios.post("http://localhost:3002/api/events", fd, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        setEvents(evts => [...evts, res.data.event]);
+      }
+      // reset form
+      setEditingEvent(null);
+      setEventForm({ title: "", location: "", date: "", description: "" });
+      setEventImage(null);
+    } catch {
+      alert("Failed to save event");
+    }
+  };
+
+  const handleEditEvent = evt => {
+    setEditingEvent(evt._id);
+    setEventForm({
+      title: evt.title,
+      location: evt.location,
+      date: evt.date.split("T")[0],
+      description: evt.description,
+    });
+  };
+
+  const handleDeleteEvent = async id => {
+    if (!window.confirm("Delete this event?")) return;
+    try {
+      await axios.delete(`http://localhost:3002/api/events/${id}`);
+      setEvents(evts => evts.filter(e => e._id !== id));
+    } catch {
+      alert("Failed to delete event");
+    }
+  };
+
   return (
     <div className="dashboard-container" style={{
-        position: 'relative',
-        width: '100%',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: `
-          linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
-          url('/assets/Login.jpeg') no-repeat center center fixed
-        `,
-        backgroundSize: 'cover',
-      }}>
+      position: 'relative',
+      width: '100%',
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: `
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('/assets/Login.jpeg') no-repeat center center fixed
+      `,
+      backgroundSize: 'cover',
+    }}>
       <Box className="dashboard-content">
         <Typography variant="h4" fontWeight={700} gutterBottom>
           Admin Dashboard
@@ -238,6 +294,7 @@ const AdminDashboard = () => {
           <Tab label="Overview" />
           <Tab label="Users" />
           <Tab label="Artworks" />
+          <Tab label="Events" />
           <Tab label="Orders" />
         </Tabs>
 
@@ -522,8 +579,95 @@ const AdminDashboard = () => {
           </Paper>
         </TabPanel>
 
-        {/* — ORDERS (5) */}
+        {/* — EVENTS (index 5) — */}
         <TabPanel value={tab} index={5}>
+          <Paper className="paper-section">
+            <Typography variant="h6" mb={2}>
+              {editingEvent ? "Edit Event" : "Create New Event"}
+            </Typography>
+
+            <TextField
+              label="Title"
+              fullWidth margin="dense"
+              value={eventForm.title}
+              onChange={e => setEventForm({ ...eventForm, title: e.target.value })}
+            />
+            <TextField
+              label="Location"
+              fullWidth margin="dense"
+              value={eventForm.location}
+              onChange={e => setEventForm({ ...eventForm, location: e.target.value })}
+            />
+            <TextField
+              label="Date"
+              type="date"
+              fullWidth margin="dense"
+              value={eventForm.date}
+              onChange={e => setEventForm({ ...eventForm, date: e.target.value })}
+              InputLabelProps={{ shrink: true }}
+            />
+            <TextField
+              label="Description"
+              fullWidth margin="dense" multiline rows={3}
+              value={eventForm.description}
+              onChange={e => setEventForm({ ...eventForm, description: e.target.value })}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={e => setEventImage(e.target.files[0])}
+              style={{ marginTop: "1rem" }}
+            />
+            <Button
+              variant="contained" sx={{ mt: 1 }}
+              onClick={handleEventSubmit}
+            >
+              {editingEvent ? "Update Event" : "Create Event"}
+            </Button>
+          </Paper>
+
+          <Paper className="paper-section">
+            <Typography variant="h6" mb={1}>All Events</Typography>
+            <TableContainer>
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Title</TableCell>
+                    <TableCell>Date</TableCell>
+                    <TableCell>Location</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {events.map(evt => (
+                    <TableRow key={evt._id}>
+                      <TableCell>{evt.title}</TableCell>
+                      <TableCell>
+                        {new Date(evt.date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>{evt.location}</TableCell>
+                      <TableCell>
+                        <Tooltip title="Edit">
+                          <IconButton color="primary" onClick={() => handleEditEvent(evt)}>
+                            <EditIcon />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                          <IconButton color="error" onClick={() => handleDeleteEvent(evt._id)}>
+                            <DeleteIcon />
+                          </IconButton>
+                        </Tooltip>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Paper>
+        </TabPanel>
+
+        {/* — ORDERS (6) */}
+        <TabPanel value={tab} index={6}>
           <Paper className="paper-section">
             <Box display="flex" alignItems="center" gap={1} mb={1}>
               <ShoppingCartIcon color="primary" />

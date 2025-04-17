@@ -1,129 +1,135 @@
-// src/pages/Wishlist.jsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import {
+  Box,
+  Grid,
+  Card,
+  CardMedia,
+  CardContent,
+  CardActions,
+  CardActionArea,
+  Typography,
+  IconButton,
+  Container,
+  CircularProgress,
+  Button
+} from '@mui/material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { Link, useNavigate } from 'react-router-dom';
 import './Wishlist.css';
 
 const Wishlist = () => {
   const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading]   = useState(true);
+  const [error, setError]       = useState('');
+  const navigate = useNavigate();
 
-  // ✅ Fetch user-specific favorites
   useEffect(() => {
-    const fetchFavorites = async () => {
+    (async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:3002/api/users/favorites', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+        const res = await fetch('http://localhost:3002/api/users/favorites', {
+          headers: { Authorization: `Bearer ${token}` }
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch favorite artworks');
-        }
-
-        const data = await response.json();
-
-        if (Array.isArray(data)) {
-          setFavorites(data);
-        } else if (Array.isArray(data.favorites)) {
-          setFavorites(data.favorites);
-        } else {
-          console.error("Unexpected favorites format:", data);
-          setFavorites([]);
-        }
-        setLoading(false);
+        if (!res.ok) throw new Error('Couldn’t load favorites');
+        const data = await res.json();
+        setFavorites(Array.isArray(data) ? data : data.favorites || []);
       } catch (err) {
-        console.error('Error fetching favorites:', err);
+        console.error(err);
         setError(err.message);
+      } finally {
         setLoading(false);
       }
-    };
-
-    fetchFavorites();
+    })();
   }, []);
 
-  // ✅ Remove from favorites
   const removeFavorite = async (id) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3002/api/users/favorites/${id}`, {
+      await fetch(`/api/users/favorites/${id}`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` }
       });
-
-      if (response.ok) {
-        const updated = await fetch('http://localhost:3002/api/users/favorites', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const updatedFavorites = await updated.json();
-        setFavorites(updatedFavorites);
-      }
-    } catch (error) {
-      console.error('Error removing favorite:', error);
+      setFavorites(favs => favs.filter(a => (a._id || a.id) !== id));
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="wishlist-page container text-center my-5">
-        <p>Loading favorites...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="wishlist-page container text-center my-5">
-        <p>Error: {error}</p>
-      </div>
-    );
-  }
-
-  if (favorites.length === 0) {
-    return (
-      <div className="wishlist-page container text-center my-5">
-        <h1>No favorites yet!</h1>
-        <p>Go add some artworks to your wishlist.</p>
-        <Link to="/marketplace" className="btn btn-primary">Browse Marketplace</Link>
-      </div>
-    );
-  }
+  if (loading) return (
+    <Container className="wishlist-container">
+      <CircularProgress />
+    </Container>
+  );
+  if (error) return (
+    <Container className="wishlist-container">
+      <Typography color="error">Error: {error}</Typography>
+    </Container>
+  );
+  if (!favorites.length) return (
+    <Container className="wishlist-container">
+      <Typography variant="h3" gutterBottom>No favorites yet!</Typography>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={() => navigate('/marketplace')}
+      >
+        Browse Artworks
+      </Button>
+    </Container>
+  );
 
   return (
-    <div className="wishlist-page container my-5">
-      <h1 className="mb-4">My Wishlist</h1>
-      <div className="row">
-        {favorites.map((art) => (
-          <div key={art._id || art.id} className="col-md-4 mb-4">
-            <div className="card wishlist-card h-100 shadow">
-              <Link to={`/artwork/${art._id || art.id}`} className="text-decoration-none text-dark">
-                <img
-                  src={`http://localhost:3002${art.image}`}
-                  className="card-img-top"
-                  alt={art.title}
-                />
-                <div className="card-body text-center">
-                  <h5 className="card-title">{art.title}</h5>
-                  <p className="card-text">{art.artist}</p>
-                  <p className="card-text"><strong>Price:</strong> ${art.price}</p>
-                </div>
-              </Link>
-              <div className="card-footer text-center">
-                <button className="btn btn-danger btn-sm" onClick={() => removeFavorite(art._id || art.id)}>
-                  Remove
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <Container className="wishlist-container" maxWidth="lg">
+      <Typography variant="h4" fontWeight={700} gutterBottom>
+        My Wishlist
+      </Typography>
+      <Grid container spacing={4}>
+        {favorites.map(art => {
+          const id = art._id || art.id;
+          return (
+            <Grid item xs={12} sm={6} md={4} key={id}>
+              <Card className="wishlist-card">
+                {/* Make the whole top area clickable */}
+                <CardActionArea
+                  component={Link}
+                  to={`/artwork/${id}`}
+                >
+                  <CardMedia
+                    component="img"
+                    height="240"
+                    image={`http://localhost:3002${art.image}`}
+                    alt={art.title}
+                    className="wishlist-media"
+                  />
+                  <CardContent className="wishlist-content">
+                    <Typography variant="h6" gutterBottom>
+                      {art.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {art.artist}
+                    </Typography>
+                    <Typography variant="subtitle1" fontWeight={600}>
+                      ${art.price}
+                    </Typography>
+                  </CardContent>
+                </CardActionArea>
+
+                {/* Only the heart is a remove button */}
+                <CardActions className="wishlist-actions">
+                  <IconButton
+                    onClick={() => removeFavorite(id)}
+                    color="error"
+                    title="Remove from Wishlist"
+                  >
+                    <FavoriteIcon />
+                  </IconButton>
+                </CardActions>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
+    </Container>
   );
 };
 

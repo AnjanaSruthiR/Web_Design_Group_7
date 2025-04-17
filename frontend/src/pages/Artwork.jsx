@@ -13,9 +13,10 @@ const Artwork = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [liked, setLiked] = useState(false);
-  
+
   // Get the current logged-in user from Redux
   const user = useSelector((state) => state.auth.user);
+  const isAdmin = user?.role === 'admin';
 
   // Fetch artwork details
   useEffect(() => {
@@ -65,7 +66,7 @@ const Artwork = () => {
       alert("Please log in to like an artwork.");
       return;
     }
-  
+
     try {
       const response = await fetch(`http://localhost:3002/api/users/favorites/${artwork._id}`, {
         method: 'POST',
@@ -73,7 +74,7 @@ const Artwork = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         setLiked(data.isFavorited);
@@ -178,10 +179,12 @@ const Artwork = () => {
                       </button>
                     )}
                   </div>
-                  {/* Add-to-Cart Button */}
-                  <button className="btn btn-primary mt-3" onClick={handleAddToCart}>
-                    Add to Cart
-                  </button>
+                  {!isAdmin && (
+                    <button className="btn btn-primary mt-3" onClick={handleAddToCart}>
+                      Add to Cart
+                    </button>
+                  )}
+
                 </div>
               )}
 

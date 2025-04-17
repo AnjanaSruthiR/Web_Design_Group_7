@@ -8,9 +8,12 @@ const Navbar = () => {
   const isLoggedIn = !!token;
 
   let dashboardPath = '/dashboard';
+  let role = null;
+  
   if (token) {
     try {
       const decoded = jwtDecode(token);
+      role = decoded.role;
       if (decoded.role === 'admin') dashboardPath = '/adminDashboard';
       else if (decoded.userType === 'seller') dashboardPath = '/sellerDashboard';
       else dashboardPath = '/userDashboard';
@@ -48,15 +51,14 @@ const Navbar = () => {
                 ArtWorks
               </Link>
             </li>
-            <li className="nav-item">
-              <Link
-                to="/cart"
-                className="nav-link"
-                style={{ fontSize: '1.25rem', fontWeight: '500' }}
-              >
-                Cart
-              </Link>
-            </li>
+              {/* only show Cart if user is logged in and NOT an admin */}
+              {isLoggedIn && role !== 'admin' && (
+              <li className="nav-item">
+                <Link to="/cart" className="nav-link" style={{ fontSize: '1.25rem', fontWeight: 500 }}>
+                  Cart
+                </Link>
+              </li>
+            )}
             {!isLoggedIn ? (
               <>
                 <li className="nav-item">

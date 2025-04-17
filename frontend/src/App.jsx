@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import PrivateRoute from './components/PrivateRoutes';
 import { useDispatch } from 'react-redux';
-import { setUser } from './features/auth/authSlice'; 
+import { setUser } from './features/auth/authSlice';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -30,10 +31,10 @@ const AppContent = () => {
     if (stored) {
       dispatch(setUser(JSON.parse(stored)));
     }
-  }, [dispatch]); 
+  }, [dispatch]);
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
-  
+
   return (
     <>
       {!isAuthPage && <Navbar />}
@@ -45,15 +46,79 @@ const AppContent = () => {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/artwork/:id" element={<Artwork />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/paymentsuccess" element={<PaymentSuccess />} />
-        <Route path="/userdashboard" element={<UserDashboard />} />
-        <Route path="/admindashboard" element={<AdminDashboard />} />
-        <Route path="/sellerDashboard" element={<SellerDashboard />} />
-        <Route path="/uploadArtwork" element={<UploadArtwork />} />
-        <Route path="/edit/:id" element={<EditArtwork />} />
-      </Routes>
+
+        {/* Protected Routes */}
+        <Route
+          path="/cart"
+          element={
+            <PrivateRoute>
+              <Cart />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/wishlist"
+          element={
+            <PrivateRoute>
+              <Wishlist />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/paymentsuccess"
+          element={
+            <PrivateRoute>
+              <PaymentSuccess />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/userdashboard"
+          element={
+            <PrivateRoute roles={['user']}>
+              <UserDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/admindashboard"
+          element={
+            <PrivateRoute roles={['admin']}>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/sellerDashboard"
+          element={
+            <PrivateRoute >
+              <SellerDashboard />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/uploadArtwork"
+          element={
+            <PrivateRoute >
+              <UploadArtwork />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/edit/:id"
+          element={
+            <PrivateRoute>
+              <EditArtwork />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/unauthorized" element={<h2>Unauthorized</h2>} />
+      </Routes >
     </>
   );
 };

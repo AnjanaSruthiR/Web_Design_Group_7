@@ -118,8 +118,14 @@ const EditArtwork = () => {
   if (error) return <Container><Typography color="error">Error: {error}</Typography></Container>;
 
   return (
-    <Container maxWidth="md" sx={{ mt: 5, mb: 5, p: 3 }}>
-      <Typography variant="h4" gutterBottom>Edit Artwork</Typography>
+    <Container maxWidth="xl" style={{
+      background: `
+        linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+        url('/assets/Login.jpeg') no-repeat center center fixed
+      `,
+      backgroundSize: 'cover',
+      padding: '64px 200px'}}>
+      <Typography variant="h4" gutterBottom style={{ color: '#fff' }}>Edit Artwork</Typography>
       <form onSubmit={handleSubmit} encType="multipart/form-data">
         {/* Basic Info Section */}
         <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
