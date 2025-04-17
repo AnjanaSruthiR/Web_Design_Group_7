@@ -3,17 +3,45 @@ import { Button, Box, Typography } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import confetti from 'canvas-confetti';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const user = useSelector(state => state.auth.user);
 
   useEffect(() => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-  }, []);
+    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+
+    const placeOrder = async () => {
+      try {
+        // 1. Get the latest cart
+        const cartRes = await axios.get(`http://localhost:3002/api/cart/${user._id}`);
+        const cart = cartRes.data;
+
+        // 2. Prepare order payload
+        const orderData = {
+          userId: user._id,
+          artworks: cart.items.map(item => ({
+            artworkId: item.artworkId._id,
+            quantity: item.quantity,
+            priceAtTime: item.priceAtTime
+          })),
+          total: cart.items.reduce((sum, item) => sum + item.priceAtTime * item.quantity, 0)
+        };
+
+        // 3. Create the order
+        await axios.post('http://localhost:3002/api/orders/create', orderData);
+
+        // 4. Clear the cart (optional)
+        await axios.delete(`http://localhost:3002/api/cart/clear/${user._id}`);
+      } catch (err) {
+        console.error('Order placement failed:', err);
+      }
+    };
+
+    if (user?._id) placeOrder();
+  }, [user]);
 
   return (
     <Box
