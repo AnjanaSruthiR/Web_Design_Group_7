@@ -4,21 +4,21 @@ import PrivateRoute from './components/PrivateRoute';
 import { useDispatch } from 'react-redux';
 import { setUser } from './features/auth/authSlice';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import Login from './pages/LoginSignup/Login';
+import Register from './pages/LoginSignup/Register';
 import Navbar from './components/Navbar';
-import Events from './pages/Events';
-import Marketplace from './pages/Marketplace';
-import Artwork from './pages/Artwork'
+import Events from './pages/Events/Events';
+import Marketplace from './pages/ArtworkMarketplace/Marketplace';
+import Artwork from './pages/ArtworkMarketplace/Artwork'
 import Wishlist from './pages/Wishlist';
-import UserDashboard from './pages/UserDashboard';
-import AdminDashboard from './pages/AdminDashboard';
-import SellerDashboard from './pages/SellerDashboard';
-import UploadArtwork from './pages/UploadArtwork';
-import EditArtwork from './pages/EditArtwork';
-import Cart from './pages/Cart';
-import PaymentSuccess from './pages/PaymentSuccess';
-import EventDetails from './pages/EventDetails';
+import UserDashboard from './pages/User/UserDashboard';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import SellerDashboard from './pages/Seller/SellerDashboard';
+import UploadArtwork from './pages/Seller/UploadArtwork';
+import EditArtwork from './pages/Seller/EditArtwork';
+import Cart from './pages/Cart/Cart';
+import PaymentSuccess from './pages/Cart/PaymentSuccess';
+import EventDetails from './pages/Events/EventDetails';
 
 const AppContent = () => {
   const location = useLocation();

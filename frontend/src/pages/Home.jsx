@@ -145,7 +145,9 @@ const Home = () => {
                       <strong>Date:</strong> {new Date(event.date).toLocaleDateString()} | <strong>Location:</strong> {event.location}
                     </p>
                     <p>{event.description}</p>
-                    <button className="btn btn-outline-primary">Learn More</button>
+                    <Link to={`/events/${event._id}`}>
+                      <button className="btn btn-outline-primary">Learn More</button>
+                    </Link>
                   </Carousel.Caption>
                 </Carousel.Item>
               ))}
