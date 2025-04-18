@@ -40,7 +40,7 @@ const cartRoutes = require('./routes/cart');
 app.use('/api/cart', cartRoutes);
 
 // payment routes
-const paymentRoutes = require('./routes/paymentsuccess');
+const paymentRoutes = require('./routes/paymentSuccess');
 app.use('/api/payment', paymentRoutes);
 
 // Orders (User Dashboard)
